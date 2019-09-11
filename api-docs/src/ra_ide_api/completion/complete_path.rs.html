@@ -588,6 +588,42 @@
 <span id="588">588</span>
 <span id="589">589</span>
 <span id="590">590</span>
+<span id="591">591</span>
+<span id="592">592</span>
+<span id="593">593</span>
+<span id="594">594</span>
+<span id="595">595</span>
+<span id="596">596</span>
+<span id="597">597</span>
+<span id="598">598</span>
+<span id="599">599</span>
+<span id="600">600</span>
+<span id="601">601</span>
+<span id="602">602</span>
+<span id="603">603</span>
+<span id="604">604</span>
+<span id="605">605</span>
+<span id="606">606</span>
+<span id="607">607</span>
+<span id="608">608</span>
+<span id="609">609</span>
+<span id="610">610</span>
+<span id="611">611</span>
+<span id="612">612</span>
+<span id="613">613</span>
+<span id="614">614</span>
+<span id="615">615</span>
+<span id="616">616</span>
+<span id="617">617</span>
+<span id="618">618</span>
+<span id="619">619</span>
+<span id="620">620</span>
+<span id="621">621</span>
+<span id="622">622</span>
+<span id="623">623</span>
+<span id="624">624</span>
+<span id="625">625</span>
+<span id="626">626</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">hir</span>::{<span class="ident">Either</span>, <span class="ident">Resolution</span>};
 <span class="kw">use</span> <span class="ident">ra_syntax</span>::<span class="ident">AstNode</span>;
@@ -1174,6 +1210,42 @@
         insert: &quot;foo()$0&quot;,
         kind: Function,
         detail: &quot;fn foo()&quot;,
+    },
+]&quot;###</span>
+        );
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">completes_qualified_macros</span>() {
+        <span class="macro">assert_debug_snapshot</span><span class="macro">!</span>(
+            <span class="ident">do_reference_completion</span>(
+                <span class="string">&quot;
+                #[macro_export]
+                macro_rules! foo {
+                    () =&gt; {}
+                }
+
+                fn main() {
+                    let _ = crate::&lt;|&gt;
+                }
+                &quot;</span>
+            ),
+            @<span class="string">r###&quot;[
+    CompletionItem {
+        label: &quot;foo&quot;,
+        source_range: [179; 179),
+        delete: [179; 179),
+        insert: &quot;foo!&quot;,
+        kind: Macro,
+        detail: &quot;#[macro_export]\nmacro_rules! foo&quot;,
+    },
+    CompletionItem {
+        label: &quot;main&quot;,
+        source_range: [179; 179),
+        delete: [179; 179),
+        insert: &quot;main()$0&quot;,
+        kind: Function,
+        detail: &quot;fn main()&quot;,
     },
 ]&quot;###</span>
         );
