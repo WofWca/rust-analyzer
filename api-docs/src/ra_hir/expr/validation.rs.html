@@ -141,7 +141,6 @@
 <span id="141">141</span>
 <span id="142">142</span>
 <span id="143">143</span>
-<span id="144">144</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>;
 
@@ -156,7 +155,7 @@
     <span class="ident">name</span>,
     <span class="ident">path</span>::{<span class="ident">PathKind</span>, <span class="ident">PathSegment</span>},
     <span class="ident">ty</span>::{<span class="ident">ApplicationTy</span>, <span class="ident">InferenceResult</span>, <span class="ident">Ty</span>, <span class="ident">TypeCtor</span>},
-    <span class="ident">Function</span>, <span class="ident">ModuleDef</span>, <span class="ident">Name</span>, <span class="ident">Path</span>, <span class="ident">PerNs</span>, <span class="ident">Resolution</span>,
+    <span class="ident">Function</span>, <span class="ident">Name</span>, <span class="ident">Path</span>,
 };
 
 <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">Expr</span>, <span class="ident">ExprId</span>, <span class="ident">RecordLitField</span>};
@@ -264,11 +263,10 @@
         };
 
         <span class="kw">let</span> <span class="ident">resolver</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">func</span>.<span class="ident">resolver</span>(<span class="ident">db</span>);
-        <span class="kw">let</span> <span class="ident">std_result_enum</span> <span class="op">=</span>
-            <span class="kw">match</span> <span class="ident">resolver</span>.<span class="ident">resolve_path_segments</span>(<span class="ident">db</span>, <span class="kw-2">&amp;</span><span class="ident">std_result_path</span>).<span class="ident">into_fully_resolved</span>() {
-                <span class="ident">PerNs</span> { <span class="ident">types</span>: <span class="prelude-val">Some</span>(<span class="ident">Resolution</span>::<span class="ident">Def</span>(<span class="ident">ModuleDef</span>::<span class="ident">Enum</span>(<span class="ident">e</span>))), .. } <span class="op">=&gt;</span> <span class="ident">e</span>,
-                <span class="kw">_</span> <span class="op">=&gt;</span> <span class="kw">return</span>,
-            };
+        <span class="kw">let</span> <span class="ident">std_result_enum</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">resolver</span>.<span class="ident">resolve_known_enum</span>(<span class="ident">db</span>, <span class="kw-2">&amp;</span><span class="ident">std_result_path</span>) {
+            <span class="prelude-val">Some</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="ident">it</span>,
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="kw">return</span>,
+        };
 
         <span class="kw">let</span> <span class="ident">std_result_ctor</span> <span class="op">=</span> <span class="ident">TypeCtor</span>::<span class="ident">Adt</span>(<span class="ident">AdtDef</span>::<span class="ident">Enum</span>(<span class="ident">std_result_enum</span>));
         <span class="kw">let</span> <span class="ident">params</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="ident">mismatch</span>.<span class="ident">expected</span> {
