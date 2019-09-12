@@ -382,6 +382,10 @@
 <span id="382">382</span>
 <span id="383">383</span>
 <span id="384">384</span>
+<span id="385">385</span>
+<span id="386">386</span>
+<span id="387">387</span>
+<span id="388">388</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! This modules takes care of rendering various defenitions as completion items.</span>
 <span class="kw">use</span> <span class="ident">hir</span>::{<span class="ident">Docs</span>, <span class="ident">HasSource</span>, <span class="ident">HirDisplay</span>, <span class="ident">PerNs</span>, <span class="ident">Resolution</span>, <span class="ident">Ty</span>, <span class="ident">TypeWalk</span>};
@@ -452,9 +456,13 @@
             <span class="ident">Resolution</span>::<span class="ident">Def</span>(<span class="ident">Function</span>(<span class="ident">func</span>)) <span class="op">=&gt;</span> {
                 <span class="kw">return</span> <span class="self">self</span>.<span class="ident">add_function_with_name</span>(<span class="ident">ctx</span>, <span class="prelude-val">Some</span>(<span class="ident">local_name</span>), <span class="kw-2">*</span><span class="ident">func</span>);
             }
-            <span class="ident">Resolution</span>::<span class="ident">Def</span>(<span class="ident">Struct</span>(<span class="ident">it</span>)) <span class="op">=&gt;</span> (<span class="ident">CompletionItemKind</span>::<span class="ident">Struct</span>, <span class="ident">it</span>.<span class="ident">docs</span>(<span class="ident">ctx</span>.<span class="ident">db</span>)),
-            <span class="ident">Resolution</span>::<span class="ident">Def</span>(<span class="ident">Union</span>(<span class="ident">it</span>)) <span class="op">=&gt;</span> (<span class="ident">CompletionItemKind</span>::<span class="ident">Struct</span>, <span class="ident">it</span>.<span class="ident">docs</span>(<span class="ident">ctx</span>.<span class="ident">db</span>)),
-            <span class="ident">Resolution</span>::<span class="ident">Def</span>(<span class="ident">Enum</span>(<span class="ident">it</span>)) <span class="op">=&gt;</span> (<span class="ident">CompletionItemKind</span>::<span class="ident">Enum</span>, <span class="ident">it</span>.<span class="ident">docs</span>(<span class="ident">ctx</span>.<span class="ident">db</span>)),
+            <span class="ident">Resolution</span>::<span class="ident">Def</span>(<span class="ident">Adt</span>(<span class="ident">hir</span>::<span class="ident">Adt</span>::<span class="ident">Struct</span>(<span class="ident">it</span>))) <span class="op">=&gt;</span> {
+                (<span class="ident">CompletionItemKind</span>::<span class="ident">Struct</span>, <span class="ident">it</span>.<span class="ident">docs</span>(<span class="ident">ctx</span>.<span class="ident">db</span>))
+            }
+            <span class="ident">Resolution</span>::<span class="ident">Def</span>(<span class="ident">Adt</span>(<span class="ident">hir</span>::<span class="ident">Adt</span>::<span class="ident">Union</span>(<span class="ident">it</span>))) <span class="op">=&gt;</span> {
+                (<span class="ident">CompletionItemKind</span>::<span class="ident">Struct</span>, <span class="ident">it</span>.<span class="ident">docs</span>(<span class="ident">ctx</span>.<span class="ident">db</span>))
+            }
+            <span class="ident">Resolution</span>::<span class="ident">Def</span>(<span class="ident">Adt</span>(<span class="ident">hir</span>::<span class="ident">Adt</span>::<span class="ident">Enum</span>(<span class="ident">it</span>))) <span class="op">=&gt;</span> (<span class="ident">CompletionItemKind</span>::<span class="ident">Enum</span>, <span class="ident">it</span>.<span class="ident">docs</span>(<span class="ident">ctx</span>.<span class="ident">db</span>)),
             <span class="ident">Resolution</span>::<span class="ident">Def</span>(<span class="ident">EnumVariant</span>(<span class="ident">it</span>)) <span class="op">=&gt;</span> (<span class="ident">CompletionItemKind</span>::<span class="ident">EnumVariant</span>, <span class="ident">it</span>.<span class="ident">docs</span>(<span class="ident">ctx</span>.<span class="ident">db</span>)),
             <span class="ident">Resolution</span>::<span class="ident">Def</span>(<span class="ident">Const</span>(<span class="ident">it</span>)) <span class="op">=&gt;</span> (<span class="ident">CompletionItemKind</span>::<span class="ident">Const</span>, <span class="ident">it</span>.<span class="ident">docs</span>(<span class="ident">ctx</span>.<span class="ident">db</span>)),
             <span class="ident">Resolution</span>::<span class="ident">Def</span>(<span class="ident">Static</span>(<span class="ident">it</span>)) <span class="op">=&gt;</span> (<span class="ident">CompletionItemKind</span>::<span class="ident">Static</span>, <span class="ident">it</span>.<span class="ident">docs</span>(<span class="ident">ctx</span>.<span class="ident">db</span>)),

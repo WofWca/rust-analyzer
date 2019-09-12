@@ -3,7 +3,7 @@
     Char,
     Int(UncertainIntTy),
     Float(UncertainFloatTy),
-    Adt(<a class="enum" href="../ra_hir/enum.AdtDef.html" title="enum ra_hir::AdtDef">AdtDef</a>),
+    Adt(<a class="enum" href="../ra_hir/enum.Adt.html" title="enum ra_hir::Adt">Adt</a>),
     Str,
     Slice,
     Array,
@@ -28,7 +28,7 @@ tuples.</p>
 (a non-surrogate code point). Written as <code>char</code>.</p>
 </div><span id="variant.Int" class="variant small-section-header"><a href="#variant.Int" class="anchor field"></a><code id='Int.v'>Int(UncertainIntTy)</code></span><div class='docblock'><p>A primitive integer type. For example, <code>i32</code>.</p>
 </div><span id="variant.Float" class="variant small-section-header"><a href="#variant.Float" class="anchor field"></a><code id='Float.v'>Float(UncertainFloatTy)</code></span><div class='docblock'><p>A primitive floating-point type. For example, <code>f64</code>.</p>
-</div><span id="variant.Adt" class="variant small-section-header"><a href="#variant.Adt" class="anchor field"></a><code id='Adt.v'>Adt(<a class="enum" href="../ra_hir/enum.AdtDef.html" title="enum ra_hir::AdtDef">AdtDef</a>)</code></span><div class='docblock'><p>Structures, enumerations and unions.</p>
+</div><span id="variant.Adt" class="variant small-section-header"><a href="#variant.Adt" class="anchor field"></a><code id='Adt.v'>Adt(<a class="enum" href="../ra_hir/enum.Adt.html" title="enum ra_hir::Adt">Adt</a>)</code></span><div class='docblock'><p>Structures, enumerations and unions.</p>
 </div><span id="variant.Str" class="variant small-section-header"><a href="#variant.Str" class="anchor field"></a><code id='Str.v'>Str</code></span><div class='docblock'><p>The pointee of a string slice. Written as <code>str</code>.</p>
 </div><span id="variant.Slice" class="variant small-section-header"><a href="#variant.Slice" class="anchor field"></a><code id='Slice.v'>Slice</code></span><div class='docblock'><p>The pointee of an array slice.  Written as <code>[T]</code>.</p>
 </div><span id="variant.Array" class="variant small-section-header"><a href="#variant.Array" class="anchor field"></a><code id='Array.v'>Array</code></span><div class='docblock'><p>An array with the given length. Written as <code>[T; n]</code>.</p>
