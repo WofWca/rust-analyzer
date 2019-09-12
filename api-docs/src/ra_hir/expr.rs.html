@@ -565,6 +565,10 @@
 <span id="565">565</span>
 <span id="566">566</span>
 <span id="567">567</span>
+<span id="568">568</span>
+<span id="569">569</span>
+<span id="570">570</span>
+<span id="571">571</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod</span> <span class="ident">lower</span>;
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod</span> <span class="ident">scope</span>;
@@ -805,6 +809,9 @@
         <span class="ident">expr</span>: <span class="ident">ExprId</span>,
         <span class="ident">mutability</span>: <span class="ident">Mutability</span>,
     },
+    <span class="ident">Box</span> {
+        <span class="ident">expr</span>: <span class="ident">ExprId</span>,
+    },
     <span class="ident">UnaryOp</span> {
         <span class="ident">expr</span>: <span class="ident">ExprId</span>,
         <span class="ident">op</span>: <span class="ident">UnaryOp</span>,
@@ -981,7 +988,8 @@
             <span class="op">|</span> <span class="ident">Expr</span>::<span class="ident">Try</span> { <span class="ident">expr</span> }
             <span class="op">|</span> <span class="ident">Expr</span>::<span class="ident">Cast</span> { <span class="ident">expr</span>, .. }
             <span class="op">|</span> <span class="ident">Expr</span>::<span class="ident">Ref</span> { <span class="ident">expr</span>, .. }
-            <span class="op">|</span> <span class="ident">Expr</span>::<span class="ident">UnaryOp</span> { <span class="ident">expr</span>, .. } <span class="op">=&gt;</span> {
+            <span class="op">|</span> <span class="ident">Expr</span>::<span class="ident">UnaryOp</span> { <span class="ident">expr</span>, .. }
+            <span class="op">|</span> <span class="ident">Expr</span>::<span class="ident">Box</span> { <span class="ident">expr</span> } <span class="op">=&gt;</span> {
                 <span class="ident">f</span>(<span class="kw-2">*</span><span class="ident">expr</span>);
             }
             <span class="ident">Expr</span>::<span class="ident">Tuple</span> { <span class="ident">exprs</span> } <span class="op">=&gt;</span> {

@@ -629,6 +629,10 @@
 <span id="629">629</span>
 <span id="630">630</span>
 <span id="631">631</span>
+<span id="632">632</span>
+<span id="633">633</span>
+<span id="634">634</span>
+<span id="635">635</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">ra_arena</span>::<span class="ident">Arena</span>;
 <span class="kw">use</span> <span class="ident">ra_syntax</span>::{
@@ -1020,6 +1024,10 @@
             <span class="ident">ast</span>::<span class="ident">Expr</span>::<span class="ident">TupleExpr</span>(<span class="ident">e</span>) <span class="op">=&gt;</span> {
                 <span class="kw">let</span> <span class="ident">exprs</span> <span class="op">=</span> <span class="ident">e</span>.<span class="ident">exprs</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">expr</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">collect_expr</span>(<span class="ident">expr</span>)).<span class="ident">collect</span>();
                 <span class="self">self</span>.<span class="ident">alloc_expr</span>(<span class="ident">Expr</span>::<span class="ident">Tuple</span> { <span class="ident">exprs</span> }, <span class="ident">syntax_ptr</span>)
+            }
+            <span class="ident">ast</span>::<span class="ident">Expr</span>::<span class="ident">BoxExpr</span>(<span class="ident">e</span>) <span class="op">=&gt;</span> {
+                <span class="kw">let</span> <span class="ident">expr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">collect_expr_opt</span>(<span class="ident">e</span>.<span class="ident">expr</span>());
+                <span class="self">self</span>.<span class="ident">alloc_expr</span>(<span class="ident">Expr</span>::<span class="ident">Box</span> { <span class="ident">expr</span> }, <span class="ident">syntax_ptr</span>)
             }
 
             <span class="ident">ast</span>::<span class="ident">Expr</span>::<span class="ident">ArrayExpr</span>(<span class="ident">e</span>) <span class="op">=&gt;</span> {

@@ -3866,6 +3866,40 @@
 <span id="3866">3866</span>
 <span id="3867">3867</span>
 <span id="3868">3868</span>
+<span id="3869">3869</span>
+<span id="3870">3870</span>
+<span id="3871">3871</span>
+<span id="3872">3872</span>
+<span id="3873">3873</span>
+<span id="3874">3874</span>
+<span id="3875">3875</span>
+<span id="3876">3876</span>
+<span id="3877">3877</span>
+<span id="3878">3878</span>
+<span id="3879">3879</span>
+<span id="3880">3880</span>
+<span id="3881">3881</span>
+<span id="3882">3882</span>
+<span id="3883">3883</span>
+<span id="3884">3884</span>
+<span id="3885">3885</span>
+<span id="3886">3886</span>
+<span id="3887">3887</span>
+<span id="3888">3888</span>
+<span id="3889">3889</span>
+<span id="3890">3890</span>
+<span id="3891">3891</span>
+<span id="3892">3892</span>
+<span id="3893">3893</span>
+<span id="3894">3894</span>
+<span id="3895">3895</span>
+<span id="3896">3896</span>
+<span id="3897">3897</span>
+<span id="3898">3898</span>
+<span id="3899">3899</span>
+<span id="3900">3900</span>
+<span id="3901">3901</span>
+<span id="3902">3902</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Generated file, do not edit by hand, see `crate/ra_tools/src/codegen`</span>
 
@@ -4172,6 +4206,33 @@
 }
 <span class="kw">impl</span> <span class="ident">BlockExpr</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">block</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Block</span><span class="op">&gt;</span> {
+        <span class="ident">AstChildren</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">syntax</span>).<span class="ident">next</span>()
+    }
+}
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Hash</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">BoxExpr</span> {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="ident">syntax</span>: <span class="ident">SyntaxNode</span>,
+}
+<span class="kw">impl</span> <span class="ident">AstNode</span> <span class="kw">for</span> <span class="ident">BoxExpr</span> {
+    <span class="kw">fn</span> <span class="ident">can_cast</span>(<span class="ident">kind</span>: <span class="ident">SyntaxKind</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="kw">match</span> <span class="ident">kind</span> {
+            <span class="ident">BOX_EXPR</span> <span class="op">=&gt;</span> <span class="bool-val">true</span>,
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>,
+        }
+    }
+    <span class="kw">fn</span> <span class="ident">cast</span>(<span class="ident">syntax</span>: <span class="ident">SyntaxNode</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="self">Self</span>::<span class="ident">can_cast</span>(<span class="ident">syntax</span>.<span class="ident">kind</span>()) {
+            <span class="prelude-val">Some</span>(<span class="self">Self</span> { <span class="ident">syntax</span> })
+        } <span class="kw">else</span> {
+            <span class="prelude-val">None</span>
+        }
+    }
+    <span class="kw">fn</span> <span class="ident">syntax</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="ident">SyntaxNode</span> {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">syntax</span>
+    }
+}
+<span class="kw">impl</span> <span class="ident">BoxExpr</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">expr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Expr</span><span class="op">&gt;</span> {
         <span class="ident">AstChildren</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">syntax</span>).<span class="ident">next</span>()
     }
 }
@@ -4518,6 +4579,7 @@
     <span class="ident">BinExpr</span>(<span class="ident">BinExpr</span>),
     <span class="ident">Literal</span>(<span class="ident">Literal</span>),
     <span class="ident">MacroCall</span>(<span class="ident">MacroCall</span>),
+    <span class="ident">BoxExpr</span>(<span class="ident">BoxExpr</span>),
 }
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">TupleExpr</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Expr</span> {
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">node</span>: <span class="ident">TupleExpr</span>) <span class="op">-&gt;</span> <span class="ident">Expr</span> {
@@ -4669,6 +4731,11 @@
         <span class="ident">Expr</span>::<span class="ident">MacroCall</span>(<span class="ident">node</span>)
     }
 }
+<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">BoxExpr</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Expr</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">node</span>: <span class="ident">BoxExpr</span>) <span class="op">-&gt;</span> <span class="ident">Expr</span> {
+        <span class="ident">Expr</span>::<span class="ident">BoxExpr</span>(<span class="ident">node</span>)
+    }
+}
 <span class="kw">impl</span> <span class="ident">AstNode</span> <span class="kw">for</span> <span class="ident">Expr</span> {
     <span class="kw">fn</span> <span class="ident">can_cast</span>(<span class="ident">kind</span>: <span class="ident">SyntaxKind</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
         <span class="kw">match</span> <span class="ident">kind</span> {
@@ -4676,9 +4743,8 @@
             <span class="op">|</span> <span class="ident">LOOP_EXPR</span> <span class="op">|</span> <span class="ident">FOR_EXPR</span> <span class="op">|</span> <span class="ident">WHILE_EXPR</span> <span class="op">|</span> <span class="ident">CONTINUE_EXPR</span> <span class="op">|</span> <span class="ident">BREAK_EXPR</span> <span class="op">|</span> <span class="ident">LABEL</span>
             <span class="op">|</span> <span class="ident">BLOCK_EXPR</span> <span class="op">|</span> <span class="ident">RETURN_EXPR</span> <span class="op">|</span> <span class="ident">MATCH_EXPR</span> <span class="op">|</span> <span class="ident">RECORD_LIT</span> <span class="op">|</span> <span class="ident">CALL_EXPR</span> <span class="op">|</span> <span class="ident">INDEX_EXPR</span>
             <span class="op">|</span> <span class="ident">METHOD_CALL_EXPR</span> <span class="op">|</span> <span class="ident">FIELD_EXPR</span> <span class="op">|</span> <span class="ident">AWAIT_EXPR</span> <span class="op">|</span> <span class="ident">TRY_EXPR</span> <span class="op">|</span> <span class="ident">TRY_BLOCK_EXPR</span>
-            <span class="op">|</span> <span class="ident">CAST_EXPR</span> <span class="op">|</span> <span class="ident">REF_EXPR</span> <span class="op">|</span> <span class="ident">PREFIX_EXPR</span> <span class="op">|</span> <span class="ident">RANGE_EXPR</span> <span class="op">|</span> <span class="ident">BIN_EXPR</span> <span class="op">|</span> <span class="ident">LITERAL</span> <span class="op">|</span> <span class="ident">MACRO_CALL</span> <span class="op">=&gt;</span> {
-                <span class="bool-val">true</span>
-            }
+            <span class="op">|</span> <span class="ident">CAST_EXPR</span> <span class="op">|</span> <span class="ident">REF_EXPR</span> <span class="op">|</span> <span class="ident">PREFIX_EXPR</span> <span class="op">|</span> <span class="ident">RANGE_EXPR</span> <span class="op">|</span> <span class="ident">BIN_EXPR</span> <span class="op">|</span> <span class="ident">LITERAL</span> <span class="op">|</span> <span class="ident">MACRO_CALL</span>
+            <span class="op">|</span> <span class="ident">BOX_EXPR</span> <span class="op">=&gt;</span> <span class="bool-val">true</span>,
             <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>,
         }
     }
@@ -4714,6 +4780,7 @@
             <span class="ident">BIN_EXPR</span> <span class="op">=&gt;</span> <span class="ident">Expr</span>::<span class="ident">BinExpr</span>(<span class="ident">BinExpr</span> { <span class="ident">syntax</span> }),
             <span class="ident">LITERAL</span> <span class="op">=&gt;</span> <span class="ident">Expr</span>::<span class="ident">Literal</span>(<span class="ident">Literal</span> { <span class="ident">syntax</span> }),
             <span class="ident">MACRO_CALL</span> <span class="op">=&gt;</span> <span class="ident">Expr</span>::<span class="ident">MacroCall</span>(<span class="ident">MacroCall</span> { <span class="ident">syntax</span> }),
+            <span class="ident">BOX_EXPR</span> <span class="op">=&gt;</span> <span class="ident">Expr</span>::<span class="ident">BoxExpr</span>(<span class="ident">BoxExpr</span> { <span class="ident">syntax</span> }),
             <span class="kw">_</span> <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">None</span>,
         };
         <span class="prelude-val">Some</span>(<span class="ident">res</span>)
@@ -4750,6 +4817,7 @@
             <span class="ident">Expr</span>::<span class="ident">BinExpr</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="kw-2">&amp;</span><span class="ident">it</span>.<span class="ident">syntax</span>,
             <span class="ident">Expr</span>::<span class="ident">Literal</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="kw-2">&amp;</span><span class="ident">it</span>.<span class="ident">syntax</span>,
             <span class="ident">Expr</span>::<span class="ident">MacroCall</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="kw-2">&amp;</span><span class="ident">it</span>.<span class="ident">syntax</span>,
+            <span class="ident">Expr</span>::<span class="ident">BoxExpr</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="kw-2">&amp;</span><span class="ident">it</span>.<span class="ident">syntax</span>,
         }
     }
 }
