@@ -148,6 +148,30 @@
 <span id="148">148</span>
 <span id="149">149</span>
 <span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
+<span id="161">161</span>
+<span id="162">162</span>
+<span id="163">163</span>
+<span id="164">164</span>
+<span id="165">165</span>
+<span id="166">166</span>
+<span id="167">167</span>
+<span id="168">168</span>
+<span id="169">169</span>
+<span id="170">170</span>
+<span id="171">171</span>
+<span id="172">172</span>
+<span id="173">173</span>
+<span id="174">174</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">mod</span> <span class="ident">analysis_stats</span>;
 <span class="kw">mod</span> <span class="ident">analysis_bench</span>;
@@ -162,6 +186,22 @@
 <span class="kw">use</span> <span class="ident">ra_syntax</span>::{<span class="ident">AstNode</span>, <span class="ident">SourceFile</span>};
 
 <span class="kw">type</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">std</span>::<span class="ident">result</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Error</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span><span class="op">&gt;&gt;</span>;
+
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>, <span class="ident">Copy</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">Verbosity</span> {
+    <span class="ident">Verbose</span>,
+    <span class="ident">Normal</span>,
+    <span class="ident">Quiet</span>,
+}
+
+<span class="kw">impl</span> <span class="ident">Verbosity</span> {
+    <span class="kw">fn</span> <span class="ident">is_verbose</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="kw">match</span> <span class="self">self</span> {
+            <span class="ident">Verbosity</span>::<span class="ident">Verbose</span> <span class="op">=&gt;</span> <span class="bool-val">true</span>,
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>,
+        }
+    }
+}
 
 <span class="kw">fn</span> <span class="ident">main</span>() <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
     <span class="ident">Logger</span>::<span class="ident">with_env</span>().<span class="ident">start</span>()<span class="question-mark">?</span>;
@@ -218,7 +258,15 @@
                 <span class="macro">eprintln</span><span class="macro">!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">help</span>::<span class="ident">ANALYSIS_STATS_HELP</span>);
                 <span class="kw">return</span> <span class="prelude-val">Ok</span>(());
             }
-            <span class="kw">let</span> <span class="ident">verbose</span> <span class="op">=</span> <span class="ident">matches</span>.<span class="ident">contains</span>([<span class="string">&quot;-v&quot;</span>, <span class="string">&quot;--verbose&quot;</span>]);
+            <span class="kw">let</span> <span class="ident">verbosity</span> <span class="op">=</span> <span class="kw">match</span> (
+                <span class="ident">matches</span>.<span class="ident">contains</span>([<span class="string">&quot;-v&quot;</span>, <span class="string">&quot;--verbose&quot;</span>]),
+                <span class="ident">matches</span>.<span class="ident">contains</span>([<span class="string">&quot;-q&quot;</span>, <span class="string">&quot;--quiet&quot;</span>]),
+            ) {
+                (<span class="bool-val">false</span>, <span class="bool-val">false</span>) <span class="op">=&gt;</span> <span class="ident">Verbosity</span>::<span class="ident">Normal</span>,
+                (<span class="bool-val">false</span>, <span class="bool-val">true</span>) <span class="op">=&gt;</span> <span class="ident">Verbosity</span>::<span class="ident">Quiet</span>,
+                (<span class="bool-val">true</span>, <span class="bool-val">false</span>) <span class="op">=&gt;</span> <span class="ident">Verbosity</span>::<span class="ident">Verbose</span>,
+                (<span class="bool-val">true</span>, <span class="bool-val">true</span>) <span class="op">=&gt;</span> <span class="prelude-val">Err</span>(<span class="string">&quot;Invalid flags: -q conflicts with -v&quot;</span>)<span class="question-mark">?</span>,
+            };
             <span class="kw">let</span> <span class="ident">memory_usage</span> <span class="op">=</span> <span class="ident">matches</span>.<span class="ident">contains</span>(<span class="string">&quot;--memory-usage&quot;</span>);
             <span class="kw">let</span> <span class="ident">only</span> <span class="op">=</span> <span class="ident">matches</span>.<span class="ident">value_from_str</span>([<span class="string">&quot;-o&quot;</span>, <span class="string">&quot;--only&quot;</span>])<span class="question-mark">?</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">v</span>: <span class="ident">String</span><span class="op">|</span> <span class="ident">v</span>.<span class="ident">to_owned</span>());
             <span class="kw">let</span> <span class="ident">path</span> <span class="op">=</span> {
@@ -230,7 +278,7 @@
                 <span class="ident">trailing</span>.<span class="ident">pop</span>().<span class="ident">unwrap</span>()
             };
             <span class="ident">analysis_stats</span>::<span class="ident">run</span>(
-                <span class="ident">verbose</span>,
+                <span class="ident">verbosity</span>,
                 <span class="ident">memory_usage</span>,
                 <span class="ident">path</span>.<span class="ident">as_ref</span>(),
                 <span class="ident">only</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="ident">String</span>::<span class="ident">as_ref</span>),
