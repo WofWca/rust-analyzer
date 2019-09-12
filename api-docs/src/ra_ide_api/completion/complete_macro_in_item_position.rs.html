@@ -48,6 +48,34 @@
 <span id="48">48</span>
 <span id="49">49</span>
 <span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
+<span id="62">62</span>
+<span id="63">63</span>
+<span id="64">64</span>
+<span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">completion</span>::{<span class="ident">CompletionContext</span>, <span class="ident">Completions</span>};
 
@@ -88,12 +116,40 @@
             ),
             @<span class="string">r##&quot;[
     CompletionItem {
-        label: &quot;foo&quot;,
+        label: &quot;foo!&quot;,
         source_range: [46; 46),
         delete: [46; 46),
-        insert: &quot;foo!&quot;,
+        insert: &quot;foo!($0)&quot;,
         kind: Macro,
         detail: &quot;macro_rules! foo&quot;,
+    },
+]&quot;##</span>
+        );
+    }
+
+    <span class="attribute">#[<span class="ident">test</span>]</span>
+    <span class="kw">fn</span> <span class="ident">completes_vec_macros_with_square_brackets</span>() {
+        <span class="macro">assert_debug_snapshot</span><span class="macro">!</span>(
+            <span class="ident">do_reference_completion</span>(
+                <span class="string">&quot;
+                //- /main.rs
+                macro_rules! vec {
+                    () =&gt; {}
+                }
+
+                fn foo() {}
+
+                &lt;|&gt;
+                &quot;</span>
+            ),
+            @<span class="string">r##&quot;[
+    CompletionItem {
+        label: &quot;vec!&quot;,
+        source_range: [46; 46),
+        delete: [46; 46),
+        insert: &quot;vec![$0]&quot;,
+        kind: Macro,
+        detail: &quot;macro_rules! vec&quot;,
     },
 ]&quot;##</span>
         );
