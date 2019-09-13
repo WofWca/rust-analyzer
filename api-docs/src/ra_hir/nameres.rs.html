@@ -549,10 +549,6 @@
 <span id="549">549</span>
 <span id="550">550</span>
 <span id="551">551</span>
-<span id="552">552</span>
-<span id="553">553</span>
-<span id="554">554</span>
-<span id="555">555</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! This module implements import-resolution/macro expansion algorithm.</span>
 <span class="doccomment">//!</span>
@@ -835,10 +831,6 @@
         <span class="self">self</span>.<span class="ident">root</span>
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">mk_module</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">module_id</span>: <span class="ident">CrateModuleId</span>) <span class="op">-&gt;</span> <span class="ident">Module</span> {
-        <span class="ident">Module</span> { <span class="ident">krate</span>: <span class="self">self</span>.<span class="ident">krate</span>, <span class="ident">module_id</span> }
-    }
-
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">prelude</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Module</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">prelude</span>
     }
@@ -945,7 +937,7 @@
         };
 
         <span class="kw">for</span> (<span class="ident">i</span>, <span class="ident">segment</span>) <span class="kw">in</span> <span class="ident">segments</span> {
-            <span class="kw">let</span> <span class="ident">curr</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">curr_per_ns</span>.<span class="ident">as_ref</span>().<span class="ident">take_types</span>() {
+            <span class="kw">let</span> <span class="ident">curr</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">curr_per_ns</span>.<span class="ident">take_types</span>() {
                 <span class="prelude-val">Some</span>(<span class="ident">r</span>) <span class="op">=&gt;</span> <span class="ident">r</span>,
                 <span class="prelude-val">None</span> <span class="op">=&gt;</span> {
                     <span class="comment">// we still have path segments left, but the path so far</span>
@@ -989,7 +981,7 @@
                         <span class="prelude-val">Some</span>(<span class="ident">variant</span>) <span class="op">=&gt;</span> <span class="ident">PerNs</span>::<span class="ident">both</span>(<span class="ident">variant</span>.<span class="ident">into</span>(), <span class="ident">variant</span>.<span class="ident">into</span>()),
                         <span class="prelude-val">None</span> <span class="op">=&gt;</span> {
                             <span class="kw">return</span> <span class="ident">ResolvePathResult</span>::<span class="ident">with</span>(
-                                <span class="ident">PerNs</span>::<span class="ident">types</span>((<span class="kw-2">*</span><span class="ident">e</span>).<span class="ident">into</span>()),
+                                <span class="ident">PerNs</span>::<span class="ident">types</span>(<span class="ident">e</span>.<span class="ident">into</span>()),
                                 <span class="ident">ReachedFixedPoint</span>::<span class="ident">Yes</span>,
                                 <span class="prelude-val">Some</span>(<span class="ident">i</span>),
                             );
@@ -1006,7 +998,7 @@
                     );
 
                     <span class="kw">return</span> <span class="ident">ResolvePathResult</span>::<span class="ident">with</span>(
-                        <span class="ident">PerNs</span>::<span class="ident">types</span>(<span class="kw-2">*</span><span class="ident">s</span>),
+                        <span class="ident">PerNs</span>::<span class="ident">types</span>(<span class="ident">s</span>),
                         <span class="ident">ReachedFixedPoint</span>::<span class="ident">Yes</span>,
                         <span class="prelude-val">Some</span>(<span class="ident">i</span>),
                     );

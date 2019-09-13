@@ -76,15 +76,6 @@
 <span id="76">76</span>
 <span id="77">77</span>
 <span id="78">78</span>
-<span id="79">79</span>
-<span id="80">80</span>
-<span id="81">81</span>
-<span id="82">82</span>
-<span id="83">83</span>
-<span id="84">84</span>
-<span id="85">85</span>
-<span id="86">86</span>
-<span id="87">87</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">MacroDef</span>;
 
@@ -156,21 +147,12 @@
         <span class="ident">PerNs</span> { <span class="ident">types</span>: <span class="prelude-val">None</span>, <span class="ident">values</span>: <span class="prelude-val">None</span>, <span class="ident">macros</span>: <span class="self">self</span>.<span class="ident">macros</span> }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_ref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">PerNs</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">T</span><span class="op">&gt;</span> {
-        <span class="ident">PerNs</span> { <span class="ident">types</span>: <span class="self">self</span>.<span class="ident">types</span>.<span class="ident">as_ref</span>(), <span class="ident">values</span>: <span class="self">self</span>.<span class="ident">values</span>.<span class="ident">as_ref</span>(), <span class="ident">macros</span>: <span class="self">self</span>.<span class="ident">macros</span> }
-    }
-
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">or</span>(<span class="self">self</span>, <span class="ident">other</span>: <span class="ident">PerNs</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">PerNs</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
         <span class="ident">PerNs</span> {
             <span class="ident">types</span>: <span class="self">self</span>.<span class="ident">types</span>.<span class="ident">or</span>(<span class="ident">other</span>.<span class="ident">types</span>),
             <span class="ident">values</span>: <span class="self">self</span>.<span class="ident">values</span>.<span class="ident">or</span>(<span class="ident">other</span>.<span class="ident">values</span>),
             <span class="ident">macros</span>: <span class="self">self</span>.<span class="ident">macros</span>.<span class="ident">or</span>(<span class="ident">other</span>.<span class="ident">macros</span>),
         }
-    }
-
-    <span class="doccomment">/// Map types and values. Leave macros unchanged.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">map</span><span class="op">&lt;</span><span class="ident">U</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">f</span>: <span class="kw">impl</span> <span class="ident">Fn</span>(<span class="ident">T</span>) <span class="op">-&gt;</span> <span class="ident">U</span>) <span class="op">-&gt;</span> <span class="ident">PerNs</span><span class="op">&lt;</span><span class="ident">U</span><span class="op">&gt;</span> {
-        <span class="ident">PerNs</span> { <span class="ident">types</span>: <span class="self">self</span>.<span class="ident">types</span>.<span class="ident">map</span>(<span class="kw-2">&amp;</span><span class="ident">f</span>), <span class="ident">values</span>: <span class="self">self</span>.<span class="ident">values</span>.<span class="ident">map</span>(<span class="kw-2">&amp;</span><span class="ident">f</span>), <span class="ident">macros</span>: <span class="self">self</span>.<span class="ident">macros</span> }
     }
 }
 </pre></div>
