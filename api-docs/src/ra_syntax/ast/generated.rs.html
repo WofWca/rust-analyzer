@@ -3900,6 +3900,39 @@
 <span id="3900">3900</span>
 <span id="3901">3901</span>
 <span id="3902">3902</span>
+<span id="3903">3903</span>
+<span id="3904">3904</span>
+<span id="3905">3905</span>
+<span id="3906">3906</span>
+<span id="3907">3907</span>
+<span id="3908">3908</span>
+<span id="3909">3909</span>
+<span id="3910">3910</span>
+<span id="3911">3911</span>
+<span id="3912">3912</span>
+<span id="3913">3913</span>
+<span id="3914">3914</span>
+<span id="3915">3915</span>
+<span id="3916">3916</span>
+<span id="3917">3917</span>
+<span id="3918">3918</span>
+<span id="3919">3919</span>
+<span id="3920">3920</span>
+<span id="3921">3921</span>
+<span id="3922">3922</span>
+<span id="3923">3923</span>
+<span id="3924">3924</span>
+<span id="3925">3925</span>
+<span id="3926">3926</span>
+<span id="3927">3927</span>
+<span id="3928">3928</span>
+<span id="3929">3929</span>
+<span id="3930">3930</span>
+<span id="3931">3931</span>
+<span id="3932">3932</span>
+<span id="3933">3933</span>
+<span id="3934">3934</span>
+<span id="3935">3935</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Generated file, do not edit by hand, see `crate/ra_tools/src/codegen`</span>
 
@@ -4434,6 +4467,29 @@
     }
 }
 <span class="kw">impl</span> <span class="ident">ContinueExpr</span> {}
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Hash</span>)]</span>
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DotDotPat</span> {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="ident">syntax</span>: <span class="ident">SyntaxNode</span>,
+}
+<span class="kw">impl</span> <span class="ident">AstNode</span> <span class="kw">for</span> <span class="ident">DotDotPat</span> {
+    <span class="kw">fn</span> <span class="ident">can_cast</span>(<span class="ident">kind</span>: <span class="ident">SyntaxKind</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="kw">match</span> <span class="ident">kind</span> {
+            <span class="ident">DOT_DOT_PAT</span> <span class="op">=&gt;</span> <span class="bool-val">true</span>,
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>,
+        }
+    }
+    <span class="kw">fn</span> <span class="ident">cast</span>(<span class="ident">syntax</span>: <span class="ident">SyntaxNode</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="self">Self</span>::<span class="ident">can_cast</span>(<span class="ident">syntax</span>.<span class="ident">kind</span>()) {
+            <span class="prelude-val">Some</span>(<span class="self">Self</span> { <span class="ident">syntax</span> })
+        } <span class="kw">else</span> {
+            <span class="prelude-val">None</span>
+        }
+    }
+    <span class="kw">fn</span> <span class="ident">syntax</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="ident">SyntaxNode</span> {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">syntax</span>
+    }
+}
+<span class="kw">impl</span> <span class="ident">DotDotPat</span> {}
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Hash</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">DynTraitType</span> {
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="ident">syntax</span>: <span class="ident">SyntaxNode</span>,
@@ -6031,6 +6087,7 @@
     <span class="ident">BoxPat</span>(<span class="ident">BoxPat</span>),
     <span class="ident">BindPat</span>(<span class="ident">BindPat</span>),
     <span class="ident">PlaceholderPat</span>(<span class="ident">PlaceholderPat</span>),
+    <span class="ident">DotDotPat</span>(<span class="ident">DotDotPat</span>),
     <span class="ident">PathPat</span>(<span class="ident">PathPat</span>),
     <span class="ident">RecordPat</span>(<span class="ident">RecordPat</span>),
     <span class="ident">TupleStructPat</span>(<span class="ident">TupleStructPat</span>),
@@ -6057,6 +6114,11 @@
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">PlaceholderPat</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Pat</span> {
     <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">node</span>: <span class="ident">PlaceholderPat</span>) <span class="op">-&gt;</span> <span class="ident">Pat</span> {
         <span class="ident">Pat</span>::<span class="ident">PlaceholderPat</span>(<span class="ident">node</span>)
+    }
+}
+<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">DotDotPat</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Pat</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">node</span>: <span class="ident">DotDotPat</span>) <span class="op">-&gt;</span> <span class="ident">Pat</span> {
+        <span class="ident">Pat</span>::<span class="ident">DotDotPat</span>(<span class="ident">node</span>)
     }
 }
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">PathPat</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Pat</span> {
@@ -6097,8 +6159,10 @@
 <span class="kw">impl</span> <span class="ident">AstNode</span> <span class="kw">for</span> <span class="ident">Pat</span> {
     <span class="kw">fn</span> <span class="ident">can_cast</span>(<span class="ident">kind</span>: <span class="ident">SyntaxKind</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
         <span class="kw">match</span> <span class="ident">kind</span> {
-            <span class="ident">REF_PAT</span> <span class="op">|</span> <span class="ident">BOX_PAT</span> <span class="op">|</span> <span class="ident">BIND_PAT</span> <span class="op">|</span> <span class="ident">PLACEHOLDER_PAT</span> <span class="op">|</span> <span class="ident">PATH_PAT</span> <span class="op">|</span> <span class="ident">RECORD_PAT</span>
-            <span class="op">|</span> <span class="ident">TUPLE_STRUCT_PAT</span> <span class="op">|</span> <span class="ident">TUPLE_PAT</span> <span class="op">|</span> <span class="ident">SLICE_PAT</span> <span class="op">|</span> <span class="ident">RANGE_PAT</span> <span class="op">|</span> <span class="ident">LITERAL_PAT</span> <span class="op">=&gt;</span> <span class="bool-val">true</span>,
+            <span class="ident">REF_PAT</span> <span class="op">|</span> <span class="ident">BOX_PAT</span> <span class="op">|</span> <span class="ident">BIND_PAT</span> <span class="op">|</span> <span class="ident">PLACEHOLDER_PAT</span> <span class="op">|</span> <span class="ident">DOT_DOT_PAT</span> <span class="op">|</span> <span class="ident">PATH_PAT</span>
+            <span class="op">|</span> <span class="ident">RECORD_PAT</span> <span class="op">|</span> <span class="ident">TUPLE_STRUCT_PAT</span> <span class="op">|</span> <span class="ident">TUPLE_PAT</span> <span class="op">|</span> <span class="ident">SLICE_PAT</span> <span class="op">|</span> <span class="ident">RANGE_PAT</span> <span class="op">|</span> <span class="ident">LITERAL_PAT</span> <span class="op">=&gt;</span> {
+                <span class="bool-val">true</span>
+            }
             <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>,
         }
     }
@@ -6108,6 +6172,7 @@
             <span class="ident">BOX_PAT</span> <span class="op">=&gt;</span> <span class="ident">Pat</span>::<span class="ident">BoxPat</span>(<span class="ident">BoxPat</span> { <span class="ident">syntax</span> }),
             <span class="ident">BIND_PAT</span> <span class="op">=&gt;</span> <span class="ident">Pat</span>::<span class="ident">BindPat</span>(<span class="ident">BindPat</span> { <span class="ident">syntax</span> }),
             <span class="ident">PLACEHOLDER_PAT</span> <span class="op">=&gt;</span> <span class="ident">Pat</span>::<span class="ident">PlaceholderPat</span>(<span class="ident">PlaceholderPat</span> { <span class="ident">syntax</span> }),
+            <span class="ident">DOT_DOT_PAT</span> <span class="op">=&gt;</span> <span class="ident">Pat</span>::<span class="ident">DotDotPat</span>(<span class="ident">DotDotPat</span> { <span class="ident">syntax</span> }),
             <span class="ident">PATH_PAT</span> <span class="op">=&gt;</span> <span class="ident">Pat</span>::<span class="ident">PathPat</span>(<span class="ident">PathPat</span> { <span class="ident">syntax</span> }),
             <span class="ident">RECORD_PAT</span> <span class="op">=&gt;</span> <span class="ident">Pat</span>::<span class="ident">RecordPat</span>(<span class="ident">RecordPat</span> { <span class="ident">syntax</span> }),
             <span class="ident">TUPLE_STRUCT_PAT</span> <span class="op">=&gt;</span> <span class="ident">Pat</span>::<span class="ident">TupleStructPat</span>(<span class="ident">TupleStructPat</span> { <span class="ident">syntax</span> }),
@@ -6125,6 +6190,7 @@
             <span class="ident">Pat</span>::<span class="ident">BoxPat</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="kw-2">&amp;</span><span class="ident">it</span>.<span class="ident">syntax</span>,
             <span class="ident">Pat</span>::<span class="ident">BindPat</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="kw-2">&amp;</span><span class="ident">it</span>.<span class="ident">syntax</span>,
             <span class="ident">Pat</span>::<span class="ident">PlaceholderPat</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="kw-2">&amp;</span><span class="ident">it</span>.<span class="ident">syntax</span>,
+            <span class="ident">Pat</span>::<span class="ident">DotDotPat</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="kw-2">&amp;</span><span class="ident">it</span>.<span class="ident">syntax</span>,
             <span class="ident">Pat</span>::<span class="ident">PathPat</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="kw-2">&amp;</span><span class="ident">it</span>.<span class="ident">syntax</span>,
             <span class="ident">Pat</span>::<span class="ident">RecordPat</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="kw-2">&amp;</span><span class="ident">it</span>.<span class="ident">syntax</span>,
             <span class="ident">Pat</span>::<span class="ident">TupleStructPat</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="kw-2">&amp;</span><span class="ident">it</span>.<span class="ident">syntax</span>,

@@ -290,12 +290,44 @@
 <span id="290">290</span>
 <span id="291">291</span>
 <span id="292">292</span>
+<span id="293">293</span>
+<span id="294">294</span>
+<span id="295">295</span>
+<span id="296">296</span>
+<span id="297">297</span>
+<span id="298">298</span>
+<span id="299">299</span>
+<span id="300">300</span>
+<span id="301">301</span>
+<span id="302">302</span>
+<span id="303">303</span>
+<span id="304">304</span>
+<span id="305">305</span>
+<span id="306">306</span>
+<span id="307">307</span>
+<span id="308">308</span>
+<span id="309">309</span>
+<span id="310">310</span>
+<span id="311">311</span>
+<span id="312">312</span>
+<span id="313">313</span>
+<span id="314">314</span>
+<span id="315">315</span>
+<span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
+<span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
 <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">const</span> <span class="ident">PATTERN_FIRST</span>: <span class="ident">TokenSet</span> <span class="op">=</span> <span class="ident">expressions</span>::<span class="ident">LITERAL_FIRST</span>
     .<span class="ident">union</span>(<span class="ident">paths</span>::<span class="ident">PATH_FIRST</span>)
-    .<span class="ident">union</span>(<span class="macro">token_set</span><span class="macro">!</span>[<span class="ident">BOX_KW</span>, <span class="ident">REF_KW</span>, <span class="ident">MUT_KW</span>, <span class="ident">L_PAREN</span>, <span class="ident">L_BRACK</span>, <span class="ident">AMP</span>, <span class="ident">UNDERSCORE</span>, <span class="ident">MINUS</span>]);
+    .<span class="ident">union</span>(<span class="macro">token_set</span><span class="macro">!</span>[<span class="ident">BOX_KW</span>, <span class="ident">REF_KW</span>, <span class="ident">MUT_KW</span>, <span class="ident">L_PAREN</span>, <span class="ident">L_BRACK</span>, <span class="ident">AMP</span>, <span class="ident">UNDERSCORE</span>, <span class="ident">MINUS</span>, <span class="ident">DOT</span>]);
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">pattern</span>(<span class="ident">p</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Parser</span>) {
     <span class="ident">pattern_r</span>(<span class="ident">p</span>, <span class="ident">PAT_RECOVERY_SET</span>);
@@ -366,6 +398,7 @@
         <span class="kw">_</span> <span class="kw">if</span> <span class="ident">paths</span>::<span class="ident">is_use_path_start</span>(<span class="ident">p</span>) <span class="op">=&gt;</span> <span class="ident">path_pat</span>(<span class="ident">p</span>),
         <span class="kw">_</span> <span class="kw">if</span> <span class="ident">is_literal_pat_start</span>(<span class="ident">p</span>) <span class="op">=&gt;</span> <span class="ident">literal_pat</span>(<span class="ident">p</span>),
 
+        <span class="macro">T</span><span class="macro">!</span>[.] <span class="kw">if</span> <span class="ident">p</span>.<span class="ident">at</span>(<span class="macro">T</span><span class="macro">!</span>[..]) <span class="op">=&gt;</span> <span class="ident">dot_dot_pat</span>(<span class="ident">p</span>),
         <span class="macro">T</span><span class="macro">!</span>[<span class="kw">_</span>] <span class="op">=&gt;</span> <span class="ident">placeholder_pat</span>(<span class="ident">p</span>),
         <span class="macro">T</span><span class="macro">!</span>[<span class="kw-2">&amp;</span>] <span class="op">=&gt;</span> <span class="ident">ref_pat</span>(<span class="ident">p</span>),
         <span class="macro">T</span><span class="macro">!</span>[<span class="string">&#39;(&#39;</span>] <span class="op">=&gt;</span> <span class="ident">tuple_pat</span>(<span class="ident">p</span>),
@@ -456,7 +489,9 @@
     <span class="ident">p</span>.<span class="ident">bump_any</span>();
     <span class="kw">while</span> <span class="op">!</span><span class="ident">p</span>.<span class="ident">at</span>(<span class="ident">EOF</span>) <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">p</span>.<span class="ident">at</span>(<span class="macro">T</span><span class="macro">!</span>[<span class="string">&#39;}&#39;</span>]) {
         <span class="kw">match</span> <span class="ident">p</span>.<span class="ident">current</span>() {
+            <span class="comment">// A trailing `..` is *not* treated as a DOT_DOT_PAT.</span>
             <span class="macro">T</span><span class="macro">!</span>[.] <span class="kw">if</span> <span class="ident">p</span>.<span class="ident">at</span>(<span class="macro">T</span><span class="macro">!</span>[..]) <span class="op">=&gt;</span> <span class="ident">p</span>.<span class="ident">bump</span>(<span class="macro">T</span><span class="macro">!</span>[..]),
+
             <span class="ident">IDENT</span> <span class="kw">if</span> <span class="ident">p</span>.<span class="ident">nth</span>(<span class="number">1</span>) <span class="op">==</span> <span class="macro">T</span><span class="macro">!</span>[:] <span class="op">=&gt;</span> <span class="ident">record_field_pat</span>(<span class="ident">p</span>),
             <span class="macro">T</span><span class="macro">!</span>[<span class="string">&#39;{&#39;</span>] <span class="op">=&gt;</span> <span class="ident">error_block</span>(<span class="ident">p</span>, <span class="string">&quot;expected ident&quot;</span>),
             <span class="macro">T</span><span class="macro">!</span>[<span class="kw">box</span>] <span class="op">=&gt;</span> {
@@ -492,6 +527,39 @@
     <span class="kw">let</span> <span class="ident">m</span> <span class="op">=</span> <span class="ident">p</span>.<span class="ident">start</span>();
     <span class="ident">p</span>.<span class="ident">bump_any</span>();
     <span class="ident">m</span>.<span class="ident">complete</span>(<span class="ident">p</span>, <span class="ident">PLACEHOLDER_PAT</span>)
+}
+
+<span class="comment">// test dot_dot_pat</span>
+<span class="comment">// fn main() {</span>
+<span class="comment">//     let .. = ();</span>
+<span class="comment">//     //</span>
+<span class="comment">//     // Tuples</span>
+<span class="comment">//     //</span>
+<span class="comment">//     let (a, ..) = ();</span>
+<span class="comment">//     let (a, ..,) = ();</span>
+<span class="comment">//     let Tuple(a, ..) = ();</span>
+<span class="comment">//     let Tuple(a, ..,) = ();</span>
+<span class="comment">//     let (.., ..) = ();</span>
+<span class="comment">//     let Tuple(.., ..) = ();</span>
+<span class="comment">//     let (.., a, ..) = ();</span>
+<span class="comment">//     let Tuple(.., a, ..) = ();</span>
+<span class="comment">//     //</span>
+<span class="comment">//     // Slices</span>
+<span class="comment">//     //</span>
+<span class="comment">//     let [..] = ();</span>
+<span class="comment">//     let [head, ..] = ();</span>
+<span class="comment">//     let [head, tail @ ..] = ();</span>
+<span class="comment">//     let [head, .., cons] = ();</span>
+<span class="comment">//     let [head, mid @ .., cons] = ();</span>
+<span class="comment">//     let [head, .., .., cons] = ();</span>
+<span class="comment">//     let [head, .., mid, tail @ ..] = ();</span>
+<span class="comment">//     let [head, .., mid, .., cons] = ();</span>
+<span class="comment">// }</span>
+<span class="kw">fn</span> <span class="ident">dot_dot_pat</span>(<span class="ident">p</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Parser</span>) <span class="op">-&gt;</span> <span class="ident">CompletedMarker</span> {
+    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">p</span>.<span class="ident">at</span>(<span class="macro">T</span><span class="macro">!</span>[..]));
+    <span class="kw">let</span> <span class="ident">m</span> <span class="op">=</span> <span class="ident">p</span>.<span class="ident">start</span>();
+    <span class="ident">p</span>.<span class="ident">bump</span>(<span class="macro">T</span><span class="macro">!</span>[..]);
+    <span class="ident">m</span>.<span class="ident">complete</span>(<span class="ident">p</span>, <span class="ident">DOT_DOT_PAT</span>)
 }
 
 <span class="comment">// test ref_pat</span>
@@ -534,16 +602,12 @@
 
 <span class="kw">fn</span> <span class="ident">pat_list</span>(<span class="ident">p</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Parser</span>, <span class="ident">ket</span>: <span class="ident">SyntaxKind</span>) {
     <span class="kw">while</span> <span class="op">!</span><span class="ident">p</span>.<span class="ident">at</span>(<span class="ident">EOF</span>) <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">p</span>.<span class="ident">at</span>(<span class="ident">ket</span>) {
-        <span class="kw">match</span> <span class="ident">p</span>.<span class="ident">current</span>() {
-            <span class="macro">T</span><span class="macro">!</span>[.] <span class="kw">if</span> <span class="ident">p</span>.<span class="ident">at</span>(<span class="macro">T</span><span class="macro">!</span>[..]) <span class="op">=&gt;</span> <span class="ident">p</span>.<span class="ident">bump</span>(<span class="macro">T</span><span class="macro">!</span>[..]),
-            <span class="kw">_</span> <span class="op">=&gt;</span> {
-                <span class="kw">if</span> <span class="op">!</span><span class="ident">p</span>.<span class="ident">at_ts</span>(<span class="ident">PATTERN_FIRST</span>) {
-                    <span class="ident">p</span>.<span class="ident">error</span>(<span class="string">&quot;expected a pattern&quot;</span>);
-                    <span class="kw">break</span>;
-                }
-                <span class="ident">pattern</span>(<span class="ident">p</span>)
-            }
+        <span class="kw">if</span> <span class="op">!</span><span class="ident">p</span>.<span class="ident">at_ts</span>(<span class="ident">PATTERN_FIRST</span>) {
+            <span class="ident">p</span>.<span class="ident">error</span>(<span class="string">&quot;expected a pattern&quot;</span>);
+            <span class="kw">break</span>;
         }
+
+        <span class="ident">pattern</span>(<span class="ident">p</span>);
         <span class="kw">if</span> <span class="op">!</span><span class="ident">p</span>.<span class="ident">at</span>(<span class="ident">ket</span>) {
             <span class="ident">p</span>.<span class="ident">expect</span>(<span class="macro">T</span><span class="macro">!</span>[,]);
         }

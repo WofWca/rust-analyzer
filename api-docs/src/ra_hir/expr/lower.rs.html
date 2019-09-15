@@ -633,6 +633,7 @@
 <span id="633">633</span>
 <span id="634">634</span>
 <span id="635">635</span>
+<span id="636">636</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">ra_arena</span>::<span class="ident">Arena</span>;
 <span class="kw">use</span> <span class="ident">ra_syntax</span>::{
@@ -1209,6 +1210,7 @@
             }
 
             <span class="comment">// FIXME: implement</span>
+            <span class="ident">ast</span>::<span class="ident">Pat</span>::<span class="ident">DotDotPat</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="ident">Pat</span>::<span class="ident">Missing</span>,
             <span class="ident">ast</span>::<span class="ident">Pat</span>::<span class="ident">BoxPat</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="ident">Pat</span>::<span class="ident">Missing</span>,
             <span class="ident">ast</span>::<span class="ident">Pat</span>::<span class="ident">LiteralPat</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="ident">Pat</span>::<span class="ident">Missing</span>,
             <span class="ident">ast</span>::<span class="ident">Pat</span>::<span class="ident">SlicePat</span>(<span class="kw">_</span>) <span class="op">|</span> <span class="ident">ast</span>::<span class="ident">Pat</span>::<span class="ident">RangePat</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="ident">Pat</span>::<span class="ident">Missing</span>,
