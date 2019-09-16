@@ -1642,29 +1642,6 @@
 <span id="1642">1642</span>
 <span id="1643">1643</span>
 <span id="1644">1644</span>
-<span id="1645">1645</span>
-<span id="1646">1646</span>
-<span id="1647">1647</span>
-<span id="1648">1648</span>
-<span id="1649">1649</span>
-<span id="1650">1650</span>
-<span id="1651">1651</span>
-<span id="1652">1652</span>
-<span id="1653">1653</span>
-<span id="1654">1654</span>
-<span id="1655">1655</span>
-<span id="1656">1656</span>
-<span id="1657">1657</span>
-<span id="1658">1658</span>
-<span id="1659">1659</span>
-<span id="1660">1660</span>
-<span id="1661">1661</span>
-<span id="1662">1662</span>
-<span id="1663">1663</span>
-<span id="1664">1664</span>
-<span id="1665">1665</span>
-<span id="1666">1666</span>
-<span id="1667">1667</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Type inference, i.e. the process of walking through the code and determining</span>
 <span class="doccomment">//! the type of each expression and pattern.</span>
@@ -1712,11 +1689,12 @@
     <span class="ident">generics</span>::{<span class="ident">GenericParams</span>, <span class="ident">HasGenericParams</span>},
     <span class="ident">name</span>,
     <span class="ident">nameres</span>::<span class="ident">Namespace</span>,
-    <span class="ident">path</span>::{<span class="ident">GenericArg</span>, <span class="ident">GenericArgs</span>, <span class="ident">PathKind</span>, <span class="ident">PathSegment</span>},
-    <span class="ident">resolve</span>::{<span class="ident">Resolver</span>, <span class="ident">TypeNs</span>, <span class="ident">ValueNs</span>, <span class="ident">ValueOrPartial</span>},
+    <span class="ident">path</span>::{<span class="ident">known</span>, <span class="ident">GenericArg</span>, <span class="ident">GenericArgs</span>},
+    <span class="ident">resolve</span>::{<span class="ident">ResolveValueResult</span>, <span class="ident">Resolver</span>, <span class="ident">TypeNs</span>, <span class="ident">ValueNs</span>},
     <span class="ident">ty</span>::<span class="ident">infer</span>::<span class="ident">diagnostics</span>::<span class="ident">InferenceDiagnostic</span>,
     <span class="ident">type_ref</span>::{<span class="ident">Mutability</span>, <span class="ident">TypeRef</span>},
-    <span class="ident">Adt</span>, <span class="ident">ConstData</span>, <span class="ident">DefWithBody</span>, <span class="ident">FnData</span>, <span class="ident">Function</span>, <span class="ident">HasBody</span>, <span class="ident">ImplItem</span>, <span class="ident">Name</span>, <span class="ident">Path</span>, <span class="ident">StructField</span>,
+    <span class="ident">Adt</span>, <span class="ident">ConstData</span>, <span class="ident">DefWithBody</span>, <span class="ident">Either</span>, <span class="ident">FnData</span>, <span class="ident">Function</span>, <span class="ident">HasBody</span>, <span class="ident">ImplItem</span>, <span class="ident">Name</span>, <span class="ident">Path</span>,
+    <span class="ident">StructField</span>,
 };
 
 <span class="kw">mod</span> <span class="ident">unify</span>;
@@ -2138,9 +2116,13 @@
         <span class="kw">let</span> <span class="ident">value_or_partial</span> <span class="op">=</span> <span class="ident">resolver</span>.<span class="ident">resolve_path_in_value_ns</span>(<span class="self">self</span>.<span class="ident">db</span>, <span class="kw-2">&amp;</span><span class="ident">path</span>)<span class="question-mark">?</span>;
 
         <span class="kw">let</span> (<span class="ident">value</span>, <span class="ident">self_subst</span>) <span class="op">=</span> <span class="kw">match</span> <span class="ident">value_or_partial</span> {
-            <span class="ident">ValueOrPartial</span>::<span class="ident">ValueNs</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> (<span class="ident">it</span>, <span class="prelude-val">None</span>),
-            <span class="ident">ValueOrPartial</span>::<span class="ident">Partial</span>(<span class="ident">def</span>, <span class="ident">remaining_index</span>) <span class="op">=&gt;</span> {
-                <span class="self">self</span>.<span class="ident">resolve_assoc_item</span>(<span class="ident">def</span>, <span class="ident">path</span>, <span class="ident">remaining_index</span>, <span class="ident">id</span>)<span class="question-mark">?</span>
+            <span class="ident">ResolveValueResult</span>::<span class="ident">ValueNs</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> (<span class="ident">it</span>, <span class="prelude-val">None</span>),
+            <span class="ident">ResolveValueResult</span>::<span class="ident">Partial</span>(<span class="ident">def</span>, <span class="ident">remaining_index</span>) <span class="op">=&gt;</span> {
+                <span class="self">self</span>.<span class="ident">resolve_assoc_item</span>(<span class="ident">Either</span>::<span class="ident">A</span>(<span class="ident">def</span>), <span class="ident">path</span>, <span class="ident">remaining_index</span>, <span class="ident">id</span>)<span class="question-mark">?</span>
+            }
+            <span class="ident">ResolveValueResult</span>::<span class="ident">TypeRef</span>(<span class="ident">type_ref</span>) <span class="op">=&gt;</span> {
+                <span class="kw">let</span> <span class="ident">ty</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">make_ty</span>(<span class="ident">type_ref</span>);
+                <span class="self">self</span>.<span class="ident">resolve_assoc_item</span>(<span class="ident">Either</span>::<span class="ident">B</span>(<span class="ident">ty</span>), <span class="ident">path</span>, <span class="number">0</span>, <span class="ident">id</span>)<span class="question-mark">?</span>
             }
         };
 
@@ -2171,7 +2153,7 @@
 
     <span class="kw">fn</span> <span class="ident">resolve_assoc_item</span>(
         <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>,
-        <span class="kw-2">mut</span> <span class="ident">def</span>: <span class="ident">TypeNs</span>,
+        <span class="kw-2">mut</span> <span class="ident">def_or_ty</span>: <span class="ident">Either</span><span class="op">&lt;</span><span class="ident">TypeNs</span>, <span class="ident">Ty</span><span class="op">&gt;</span>,
         <span class="ident">path</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span>,
         <span class="ident">remaining_index</span>: <span class="ident">usize</span>,
         <span class="ident">id</span>: <span class="ident">ExprOrPatId</span>,
@@ -2184,30 +2166,33 @@
         <span class="comment">// resolve intermediate segments</span>
         <span class="kw">for</span> (<span class="ident">i</span>, <span class="ident">segment</span>) <span class="kw">in</span> <span class="ident">path</span>.<span class="ident">segments</span>[<span class="ident">remaining_index</span>..].<span class="ident">iter</span>().<span class="ident">enumerate</span>() {
             <span class="kw">let</span> <span class="ident">is_last_segment</span> <span class="op">=</span> <span class="ident">i</span> <span class="op">==</span> <span class="ident">path</span>.<span class="ident">segments</span>[<span class="ident">remaining_index</span>..].<span class="ident">len</span>() <span class="op">-</span> <span class="number">1</span>;
-            <span class="ident">ty</span> <span class="op">=</span> {
-                <span class="kw">let</span> <span class="ident">typable</span>: <span class="ident">TypableDef</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">def</span> {
-                    <span class="ident">TypeNs</span>::<span class="ident">Adt</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="ident">it</span>.<span class="ident">into</span>(),
-                    <span class="ident">TypeNs</span>::<span class="ident">TypeAlias</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="ident">it</span>.<span class="ident">into</span>(),
-                    <span class="ident">TypeNs</span>::<span class="ident">BuiltinType</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="ident">it</span>.<span class="ident">into</span>(),
-                    <span class="comment">// FIXME associated item of traits, generics, and Self</span>
-                    <span class="ident">TypeNs</span>::<span class="ident">Trait</span>(<span class="kw">_</span>) <span class="op">|</span> <span class="ident">TypeNs</span>::<span class="ident">GenericParam</span>(<span class="kw">_</span>) <span class="op">|</span> <span class="ident">TypeNs</span>::<span class="ident">SelfType</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> {
-                        <span class="kw">return</span> <span class="prelude-val">None</span>;
-                    }
-                    <span class="comment">// FIXME: report error here</span>
-                    <span class="ident">TypeNs</span>::<span class="ident">EnumVariant</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">None</span>,
-                };
+            <span class="ident">ty</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">def_or_ty</span> {
+                <span class="ident">Either</span>::<span class="ident">A</span>(<span class="ident">def</span>) <span class="op">=&gt;</span> {
+                    <span class="kw">let</span> <span class="ident">typable</span>: <span class="ident">TypableDef</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">def</span> {
+                        <span class="ident">TypeNs</span>::<span class="ident">Adt</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="ident">it</span>.<span class="ident">into</span>(),
+                        <span class="ident">TypeNs</span>::<span class="ident">TypeAlias</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="ident">it</span>.<span class="ident">into</span>(),
+                        <span class="ident">TypeNs</span>::<span class="ident">BuiltinType</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="ident">it</span>.<span class="ident">into</span>(),
+                        <span class="comment">// FIXME associated item of traits, generics, and Self</span>
+                        <span class="ident">TypeNs</span>::<span class="ident">Trait</span>(<span class="kw">_</span>) <span class="op">|</span> <span class="ident">TypeNs</span>::<span class="ident">GenericParam</span>(<span class="kw">_</span>) <span class="op">|</span> <span class="ident">TypeNs</span>::<span class="ident">SelfType</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> {
+                            <span class="kw">return</span> <span class="prelude-val">None</span>;
+                        }
+                        <span class="comment">// FIXME: report error here</span>
+                        <span class="ident">TypeNs</span>::<span class="ident">EnumVariant</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">None</span>,
+                    };
 
-                <span class="kw">let</span> <span class="ident">ty</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">db</span>.<span class="ident">type_for_def</span>(<span class="ident">typable</span>, <span class="ident">Namespace</span>::<span class="ident">Types</span>);
+                    <span class="kw">let</span> <span class="ident">ty</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">db</span>.<span class="ident">type_for_def</span>(<span class="ident">typable</span>, <span class="ident">Namespace</span>::<span class="ident">Types</span>);
 
-                <span class="comment">// For example, this substs will take `Gen::*&lt;u32&gt;*::make`</span>
-                <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">remaining_index</span> <span class="op">&gt;</span> <span class="number">0</span>);
-                <span class="kw">let</span> <span class="ident">substs</span> <span class="op">=</span> <span class="ident">Ty</span>::<span class="ident">substs_from_path_segment</span>(
-                    <span class="self">self</span>.<span class="ident">db</span>,
-                    <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">resolver</span>,
-                    <span class="kw-2">&amp;</span><span class="ident">path</span>.<span class="ident">segments</span>[<span class="ident">remaining_index</span> <span class="op">+</span> <span class="ident">i</span> <span class="op">-</span> <span class="number">1</span>],
-                    <span class="ident">typable</span>,
-                );
-                <span class="ident">ty</span>.<span class="ident">subst</span>(<span class="kw-2">&amp;</span><span class="ident">substs</span>)
+                    <span class="comment">// For example, this substs will take `Gen::*&lt;u32&gt;*::make`</span>
+                    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">remaining_index</span> <span class="op">&gt;</span> <span class="number">0</span>);
+                    <span class="kw">let</span> <span class="ident">substs</span> <span class="op">=</span> <span class="ident">Ty</span>::<span class="ident">substs_from_path_segment</span>(
+                        <span class="self">self</span>.<span class="ident">db</span>,
+                        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">resolver</span>,
+                        <span class="kw-2">&amp;</span><span class="ident">path</span>.<span class="ident">segments</span>[<span class="ident">remaining_index</span> <span class="op">+</span> <span class="ident">i</span> <span class="op">-</span> <span class="number">1</span>],
+                        <span class="ident">typable</span>,
+                    );
+                    <span class="ident">ty</span>.<span class="ident">subst</span>(<span class="kw-2">&amp;</span><span class="ident">substs</span>)
+                }
+                <span class="ident">Either</span>::<span class="ident">B</span>(<span class="ident">ty</span>) <span class="op">=&gt;</span> <span class="ident">ty</span>,
             };
             <span class="kw">if</span> <span class="ident">is_last_segment</span> {
                 <span class="kw">break</span>;
@@ -2218,15 +2203,15 @@
             <span class="ident">log</span>::<span class="macro">debug</span><span class="macro">!</span>(<span class="string">&quot;looking for path segment: {:?}&quot;</span>, <span class="ident">segment</span>);
 
             <span class="kw">let</span> <span class="ident">ty</span> <span class="op">=</span> <span class="ident">mem</span>::<span class="ident">replace</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ty</span>, <span class="ident">Ty</span>::<span class="ident">Unknown</span>);
-            <span class="ident">def</span> <span class="op">=</span> <span class="ident">ty</span>.<span class="ident">iterate_impl_items</span>(<span class="self">self</span>.<span class="ident">db</span>, <span class="ident">krate</span>, <span class="op">|</span><span class="ident">item</span><span class="op">|</span> {
+            <span class="ident">def_or_ty</span> <span class="op">=</span> <span class="ident">ty</span>.<span class="ident">iterate_impl_items</span>(<span class="self">self</span>.<span class="ident">db</span>, <span class="ident">krate</span>, <span class="op">|</span><span class="ident">item</span><span class="op">|</span> {
                 <span class="kw">match</span> <span class="ident">item</span> {
                     <span class="kw">crate</span>::<span class="ident">ImplItem</span>::<span class="ident">Method</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
                     <span class="kw">crate</span>::<span class="ident">ImplItem</span>::<span class="ident">Const</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
 
                     <span class="comment">// FIXME: Resolve associated types</span>
                     <span class="kw">crate</span>::<span class="ident">ImplItem</span>::<span class="ident">TypeAlias</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> {
-                        <span class="comment">// Some(TypeNs::TypeAlias(..))</span>
-                        <span class="prelude-val">None</span>::<span class="op">&lt;</span><span class="ident">TypeNs</span><span class="op">&gt;</span>
+                        <span class="comment">// Some(Either::A(TypeNs::TypeAlias(..)))</span>
+                        <span class="prelude-val">None</span>
                     }
                 }
             })<span class="question-mark">?</span>;
@@ -3102,57 +3087,26 @@
     }
 
     <span class="kw">fn</span> <span class="ident">resolve_into_iter_item</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">TypeAlias</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">into_iter_path</span> <span class="op">=</span> <span class="ident">Path</span> {
-            <span class="ident">kind</span>: <span class="ident">PathKind</span>::<span class="ident">Abs</span>,
-            <span class="ident">segments</span>: <span class="macro">vec</span><span class="macro">!</span>[
-                <span class="ident">PathSegment</span> { <span class="ident">name</span>: <span class="ident">name</span>::<span class="ident">STD</span>, <span class="ident">args_and_bindings</span>: <span class="prelude-val">None</span> },
-                <span class="ident">PathSegment</span> { <span class="ident">name</span>: <span class="ident">name</span>::<span class="ident">ITER</span>, <span class="ident">args_and_bindings</span>: <span class="prelude-val">None</span> },
-                <span class="ident">PathSegment</span> { <span class="ident">name</span>: <span class="ident">name</span>::<span class="ident">INTO_ITERATOR</span>, <span class="ident">args_and_bindings</span>: <span class="prelude-val">None</span> },
-            ],
-        };
-
-        <span class="kw">let</span> <span class="ident">trait_</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">resolver</span>.<span class="ident">resolve_known_trait</span>(<span class="self">self</span>.<span class="ident">db</span>, <span class="kw-2">&amp;</span><span class="ident">into_iter_path</span>)<span class="question-mark">?</span>;
-        <span class="ident">trait_</span>.<span class="ident">associated_type_by_name</span>(<span class="self">self</span>.<span class="ident">db</span>, <span class="kw-2">&amp;</span><span class="ident">name</span>::<span class="ident">ITEM</span>)
+        <span class="kw">let</span> <span class="ident">path</span> <span class="op">=</span> <span class="ident">known</span>::<span class="ident">std_iter_into_iterator</span>();
+        <span class="kw">let</span> <span class="ident">trait_</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">resolver</span>.<span class="ident">resolve_known_trait</span>(<span class="self">self</span>.<span class="ident">db</span>, <span class="kw-2">&amp;</span><span class="ident">path</span>)<span class="question-mark">?</span>;
+        <span class="ident">trait_</span>.<span class="ident">associated_type_by_name</span>(<span class="self">self</span>.<span class="ident">db</span>, <span class="kw-2">&amp;</span><span class="ident">name</span>::<span class="ident">ITEM_TYPE</span>)
     }
 
     <span class="kw">fn</span> <span class="ident">resolve_ops_try_ok</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">TypeAlias</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">ops_try_path</span> <span class="op">=</span> <span class="ident">Path</span> {
-            <span class="ident">kind</span>: <span class="ident">PathKind</span>::<span class="ident">Abs</span>,
-            <span class="ident">segments</span>: <span class="macro">vec</span><span class="macro">!</span>[
-                <span class="ident">PathSegment</span> { <span class="ident">name</span>: <span class="ident">name</span>::<span class="ident">STD</span>, <span class="ident">args_and_bindings</span>: <span class="prelude-val">None</span> },
-                <span class="ident">PathSegment</span> { <span class="ident">name</span>: <span class="ident">name</span>::<span class="ident">OPS</span>, <span class="ident">args_and_bindings</span>: <span class="prelude-val">None</span> },
-                <span class="ident">PathSegment</span> { <span class="ident">name</span>: <span class="ident">name</span>::<span class="ident">TRY</span>, <span class="ident">args_and_bindings</span>: <span class="prelude-val">None</span> },
-            ],
-        };
-
-        <span class="kw">let</span> <span class="ident">trait_</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">resolver</span>.<span class="ident">resolve_known_trait</span>(<span class="self">self</span>.<span class="ident">db</span>, <span class="kw-2">&amp;</span><span class="ident">ops_try_path</span>)<span class="question-mark">?</span>;
-        <span class="ident">trait_</span>.<span class="ident">associated_type_by_name</span>(<span class="self">self</span>.<span class="ident">db</span>, <span class="kw-2">&amp;</span><span class="ident">name</span>::<span class="ident">OK</span>)
+        <span class="kw">let</span> <span class="ident">path</span> <span class="op">=</span> <span class="ident">known</span>::<span class="ident">std_ops_try</span>();
+        <span class="kw">let</span> <span class="ident">trait_</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">resolver</span>.<span class="ident">resolve_known_trait</span>(<span class="self">self</span>.<span class="ident">db</span>, <span class="kw-2">&amp;</span><span class="ident">path</span>)<span class="question-mark">?</span>;
+        <span class="ident">trait_</span>.<span class="ident">associated_type_by_name</span>(<span class="self">self</span>.<span class="ident">db</span>, <span class="kw-2">&amp;</span><span class="ident">name</span>::<span class="ident">OK_TYPE</span>)
     }
 
     <span class="kw">fn</span> <span class="ident">resolve_future_future_output</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">TypeAlias</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">future_future_path</span> <span class="op">=</span> <span class="ident">Path</span> {
-            <span class="ident">kind</span>: <span class="ident">PathKind</span>::<span class="ident">Abs</span>,
-            <span class="ident">segments</span>: <span class="macro">vec</span><span class="macro">!</span>[
-                <span class="ident">PathSegment</span> { <span class="ident">name</span>: <span class="ident">name</span>::<span class="ident">STD</span>, <span class="ident">args_and_bindings</span>: <span class="prelude-val">None</span> },
-                <span class="ident">PathSegment</span> { <span class="ident">name</span>: <span class="ident">name</span>::<span class="ident">FUTURE_MOD</span>, <span class="ident">args_and_bindings</span>: <span class="prelude-val">None</span> },
-                <span class="ident">PathSegment</span> { <span class="ident">name</span>: <span class="ident">name</span>::<span class="ident">FUTURE_TYPE</span>, <span class="ident">args_and_bindings</span>: <span class="prelude-val">None</span> },
-            ],
-        };
-
-        <span class="kw">let</span> <span class="ident">trait_</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">resolver</span>.<span class="ident">resolve_known_trait</span>(<span class="self">self</span>.<span class="ident">db</span>, <span class="kw-2">&amp;</span><span class="ident">future_future_path</span>)<span class="question-mark">?</span>;
-        <span class="ident">trait_</span>.<span class="ident">associated_type_by_name</span>(<span class="self">self</span>.<span class="ident">db</span>, <span class="kw-2">&amp;</span><span class="ident">name</span>::<span class="ident">OUTPUT</span>)
+        <span class="kw">let</span> <span class="ident">path</span> <span class="op">=</span> <span class="ident">known</span>::<span class="ident">std_future_future</span>();
+        <span class="kw">let</span> <span class="ident">trait_</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">resolver</span>.<span class="ident">resolve_known_trait</span>(<span class="self">self</span>.<span class="ident">db</span>, <span class="kw-2">&amp;</span><span class="ident">path</span>)<span class="question-mark">?</span>;
+        <span class="ident">trait_</span>.<span class="ident">associated_type_by_name</span>(<span class="self">self</span>.<span class="ident">db</span>, <span class="kw-2">&amp;</span><span class="ident">name</span>::<span class="ident">OUTPUT_TYPE</span>)
     }
 
     <span class="kw">fn</span> <span class="ident">resolve_boxed_box</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Adt</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">boxed_box_path</span> <span class="op">=</span> <span class="ident">Path</span> {
-            <span class="ident">kind</span>: <span class="ident">PathKind</span>::<span class="ident">Abs</span>,
-            <span class="ident">segments</span>: <span class="macro">vec</span><span class="macro">!</span>[
-                <span class="ident">PathSegment</span> { <span class="ident">name</span>: <span class="ident">name</span>::<span class="ident">STD</span>, <span class="ident">args_and_bindings</span>: <span class="prelude-val">None</span> },
-                <span class="ident">PathSegment</span> { <span class="ident">name</span>: <span class="ident">name</span>::<span class="ident">BOXED_MOD</span>, <span class="ident">args_and_bindings</span>: <span class="prelude-val">None</span> },
-                <span class="ident">PathSegment</span> { <span class="ident">name</span>: <span class="ident">name</span>::<span class="ident">BOX_TYPE</span>, <span class="ident">args_and_bindings</span>: <span class="prelude-val">None</span> },
-            ],
-        };
-        <span class="kw">let</span> <span class="ident">struct_</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">resolver</span>.<span class="ident">resolve_known_struct</span>(<span class="self">self</span>.<span class="ident">db</span>, <span class="kw-2">&amp;</span><span class="ident">boxed_box_path</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">path</span> <span class="op">=</span> <span class="ident">known</span>::<span class="ident">std_boxed_box</span>();
+        <span class="kw">let</span> <span class="ident">struct_</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">resolver</span>.<span class="ident">resolve_known_struct</span>(<span class="self">self</span>.<span class="ident">db</span>, <span class="kw-2">&amp;</span><span class="ident">path</span>)<span class="question-mark">?</span>;
         <span class="prelude-val">Some</span>(<span class="ident">Adt</span>::<span class="ident">Struct</span>(<span class="ident">struct_</span>))
     }
 }

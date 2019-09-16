@@ -549,6 +549,11 @@
 <span id="549">549</span>
 <span id="550">550</span>
 <span id="551">551</span>
+<span id="552">552</span>
+<span id="553">553</span>
+<span id="554">554</span>
+<span id="555">555</span>
+<span id="556">556</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! This module implements import-resolution/macro expansion algorithm.</span>
 <span class="doccomment">//!</span>
@@ -933,6 +938,11 @@
                 } <span class="kw">else</span> {
                     <span class="kw">return</span> <span class="ident">ResolvePathResult</span>::<span class="ident">empty</span>(<span class="ident">ReachedFixedPoint</span>::<span class="ident">No</span>); <span class="comment">// extern crate declarations can add to the extern prelude</span>
                 }
+            }
+            <span class="ident">PathKind</span>::<span class="ident">Type</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> {
+                <span class="comment">// This is handled in `infer::infer_path_expr`</span>
+                <span class="comment">// The result returned here does not matter</span>
+                <span class="kw">return</span> <span class="ident">ResolvePathResult</span>::<span class="ident">empty</span>(<span class="ident">ReachedFixedPoint</span>::<span class="ident">Yes</span>);
             }
         };
 

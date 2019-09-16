@@ -3933,6 +3933,9 @@
 <span id="3933">3933</span>
 <span id="3934">3934</span>
 <span id="3935">3935</span>
+<span id="3936">3936</span>
+<span id="3937">3937</span>
+<span id="3938">3938</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Generated file, do not edit by hand, see `crate/ra_tools/src/codegen`</span>
 
@@ -6319,6 +6322,9 @@
         <span class="ident">AstChildren</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">syntax</span>).<span class="ident">next</span>()
     }
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">ret_type</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">RetType</span><span class="op">&gt;</span> {
+        <span class="ident">AstChildren</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">syntax</span>).<span class="ident">next</span>()
+    }
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">path_type</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PathType</span><span class="op">&gt;</span> {
         <span class="ident">AstChildren</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">syntax</span>).<span class="ident">next</span>()
     }
 }
