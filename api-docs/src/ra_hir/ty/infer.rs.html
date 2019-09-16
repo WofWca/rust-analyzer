@@ -2245,7 +2245,7 @@
 
                 <span class="kw">crate</span>::<span class="ident">ImplItem</span>::<span class="ident">Const</span>(<span class="ident">konst</span>) <span class="op">=&gt;</span> {
                     <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">konst</span>.<span class="ident">data</span>(<span class="self">self</span>.<span class="ident">db</span>);
-                    <span class="kw">if</span> <span class="ident">segment</span>.<span class="ident">name</span> <span class="op">==</span> <span class="kw-2">*</span><span class="ident">data</span>.<span class="ident">name</span>() {
+                    <span class="kw">if</span> <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">segment</span>.<span class="ident">name</span>) <span class="op">==</span> <span class="ident">data</span>.<span class="ident">name</span>() {
                         <span class="prelude-val">Some</span>(<span class="ident">ValueNs</span>::<span class="ident">Const</span>(<span class="ident">konst</span>))
                     } <span class="kw">else</span> {
                         <span class="prelude-val">None</span>
