@@ -149,21 +149,6 @@
 <span id="149">149</span>
 <span id="150">150</span>
 <span id="151">151</span>
-<span id="152">152</span>
-<span id="153">153</span>
-<span id="154">154</span>
-<span id="155">155</span>
-<span id="156">156</span>
-<span id="157">157</span>
-<span id="158">158</span>
-<span id="159">159</span>
-<span id="160">160</span>
-<span id="161">161</span>
-<span id="162">162</span>
-<span id="163">163</span>
-<span id="164">164</span>
-<span id="165">165</span>
-<span id="166">166</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! This module takes a (parsed) definition of `macro_rules` invocation, a</span>
 <span class="doccomment">//! `tt::TokenTree` representing an argument of macro invocation, and produces a</span>
@@ -175,7 +160,6 @@
 <span class="kw">use</span> <span class="ident">ra_syntax</span>::<span class="ident">SmolStr</span>;
 <span class="kw">use</span> <span class="ident">rustc_hash</span>::<span class="ident">FxHashMap</span>;
 
-<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">tt_cursor</span>::<span class="ident">TtCursor</span>;
 <span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">ExpandError</span>;
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">expand</span>(
@@ -186,12 +170,8 @@
 }
 
 <span class="kw">fn</span> <span class="ident">expand_rule</span>(<span class="ident">rule</span>: <span class="kw-2">&amp;</span><span class="kw">crate</span>::<span class="ident">Rule</span>, <span class="ident">input</span>: <span class="kw-2">&amp;</span><span class="ident">tt</span>::<span class="ident">Subtree</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">tt</span>::<span class="ident">Subtree</span>, <span class="ident">ExpandError</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">input</span> <span class="op">=</span> <span class="ident">TtCursor</span>::<span class="ident">new</span>(<span class="ident">input</span>);
-    <span class="kw">let</span> <span class="ident">bindings</span> <span class="op">=</span> <span class="ident">matcher</span>::<span class="ident">match_lhs</span>(<span class="kw-2">&amp;</span><span class="ident">rule</span>.<span class="ident">lhs</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">input</span>)<span class="question-mark">?</span>;
-    <span class="kw">if</span> <span class="op">!</span><span class="ident">input</span>.<span class="ident">is_eof</span>() {
-        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">ExpandError</span>::<span class="ident">UnexpectedToken</span>);
-    }
-    <span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="ident">transcriber</span>::<span class="ident">transcribe</span>(<span class="kw-2">&amp;</span><span class="ident">bindings</span>, <span class="kw-2">&amp;</span><span class="ident">rule</span>.<span class="ident">rhs</span>)<span class="question-mark">?</span>;
+    <span class="kw">let</span> <span class="ident">bindings</span> <span class="op">=</span> <span class="ident">matcher</span>::<span class="ident">match_</span>(<span class="kw-2">&amp;</span><span class="ident">rule</span>.<span class="ident">lhs</span>, <span class="ident">input</span>)<span class="question-mark">?</span>;
+    <span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="ident">transcriber</span>::<span class="ident">transcribe</span>(<span class="kw-2">&amp;</span><span class="ident">rule</span>.<span class="ident">rhs</span>, <span class="kw-2">&amp;</span><span class="ident">bindings</span>)<span class="question-mark">?</span>;
     <span class="prelude-val">Ok</span>(<span class="ident">res</span>)
 }
 
@@ -270,13 +250,6 @@
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_expand_rule</span>() {
-        <span class="comment">// FIXME: The missing $var check should be in parsing phase</span>
-        <span class="comment">// assert_err(</span>
-        <span class="comment">//     &quot;($i:ident) =&gt; ($j)&quot;,</span>
-        <span class="comment">//     &quot;foo!{a}&quot;,</span>
-        <span class="comment">//     ExpandError::BindingError(String::from(&quot;could not find binding `j`&quot;)),</span>
-        <span class="comment">// );</span>
-
         <span class="ident">assert_err</span>(
             <span class="string">&quot;($($i:ident);*) =&gt; ($i)&quot;</span>,
             <span class="string">&quot;foo!{a}&quot;</span>,
@@ -284,9 +257,6 @@
                 <span class="string">&quot;expected simple binding, found nested binding `i`&quot;</span>,
             )),
         );
-
-        <span class="ident">assert_err</span>(<span class="string">&quot;($i) =&gt; ($i)&quot;</span>, <span class="string">&quot;foo!{a}&quot;</span>, <span class="ident">ExpandError</span>::<span class="ident">UnexpectedToken</span>);
-        <span class="ident">assert_err</span>(<span class="string">&quot;($i:) =&gt; ($i)&quot;</span>, <span class="string">&quot;foo!{a}&quot;</span>, <span class="ident">ExpandError</span>::<span class="ident">UnexpectedToken</span>);
 
         <span class="comment">// FIXME:</span>
         <span class="comment">// Add an err test case for ($($i:ident)) =&gt; ($())</span>

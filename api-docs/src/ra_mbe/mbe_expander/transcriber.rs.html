@@ -225,20 +225,28 @@
 <span id="225">225</span>
 <span id="226">226</span>
 <span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
 </pre><div class="example-wrap"><pre class="rust ">
+<span class="doccomment">//! Transcraber takes a template, like `fn $ident() {}`, a set of bindings like</span>
+<span class="doccomment">//! `$ident =&gt; foo`, interpolates variables in the template, to get `fn foo() {}`</span>
+
 <span class="kw">use</span> <span class="ident">ra_syntax</span>::<span class="ident">SmolStr</span>;
 
 <span class="kw">use</span> <span class="kw">crate</span>::{
     <span class="ident">mbe_expander</span>::{<span class="ident">Binding</span>, <span class="ident">Bindings</span>, <span class="ident">Fragment</span>},
+    <span class="ident">parser</span>::{<span class="ident">parse_template</span>, <span class="ident">Op</span>, <span class="ident">RepeatKind</span>, <span class="ident">Separator</span>},
     <span class="ident">ExpandError</span>,
 };
 
 <span class="kw">impl</span> <span class="ident">Bindings</span> {
-    <span class="kw">fn</span> <span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">SmolStr</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">fn</span> <span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">contains_key</span>(<span class="ident">name</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">SmolStr</span>, <span class="ident">nesting</span>: <span class="kw-2">&amp;</span>[<span class="ident">usize</span>]) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Fragment</span>, <span class="ident">ExpandError</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">nesting</span>: <span class="kw-2">&amp;</span>[<span class="ident">usize</span>]) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Fragment</span>, <span class="ident">ExpandError</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">b</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">get</span>(<span class="ident">name</span>).<span class="ident">ok_or_else</span>(<span class="op">||</span> {
             <span class="ident">ExpandError</span>::<span class="ident">BindingError</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;could not find binding `{}`&quot;</span>, <span class="ident">name</span>))
         })<span class="question-mark">?</span>;
@@ -271,11 +279,12 @@
 }
 
 <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn</span> <span class="ident">transcribe</span>(
+    <span class="ident">template</span>: <span class="kw-2">&amp;</span><span class="ident">tt</span>::<span class="ident">Subtree</span>,
     <span class="ident">bindings</span>: <span class="kw-2">&amp;</span><span class="ident">Bindings</span>,
-    <span class="ident">template</span>: <span class="kw-2">&amp;</span><span class="kw">crate</span>::<span class="ident">Subtree</span>,
 ) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">tt</span>::<span class="ident">Subtree</span>, <span class="ident">ExpandError</span><span class="op">&gt;</span> {
+    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">template</span>.<span class="ident">delimiter</span> <span class="op">==</span> <span class="ident">tt</span>::<span class="ident">Delimiter</span>::<span class="prelude-val">None</span>);
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ctx</span> <span class="op">=</span> <span class="ident">ExpandCtx</span> { <span class="ident">bindings</span>: <span class="kw-2">&amp;</span><span class="ident">bindings</span>, <span class="ident">nesting</span>: <span class="ident">Vec</span>::<span class="ident">new</span>(), <span class="ident">var_expanded</span>: <span class="bool-val">false</span> };
-    <span class="ident">expand_subtree</span>(<span class="ident">template</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ctx</span>)
+    <span class="ident">expand_subtree</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ctx</span>, <span class="ident">template</span>)
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
@@ -285,159 +294,158 @@
     <span class="ident">var_expanded</span>: <span class="ident">bool</span>,
 }
 
-<span class="kw">fn</span> <span class="ident">expand_subtree</span>(
-    <span class="ident">template</span>: <span class="kw-2">&amp;</span><span class="kw">crate</span>::<span class="ident">Subtree</span>,
-    <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ExpandCtx</span>,
-) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">tt</span>::<span class="ident">Subtree</span>, <span class="ident">ExpandError</span><span class="op">&gt;</span> {
+<span class="kw">fn</span> <span class="ident">expand_subtree</span>(<span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ExpandCtx</span>, <span class="ident">template</span>: <span class="kw-2">&amp;</span><span class="ident">tt</span>::<span class="ident">Subtree</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">tt</span>::<span class="ident">Subtree</span>, <span class="ident">ExpandError</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">tt</span>::<span class="ident">TokenTree</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
-    <span class="kw">for</span> <span class="ident">tt</span> <span class="kw">in</span> <span class="ident">template</span>.<span class="ident">token_trees</span>.<span class="ident">iter</span>() {
-        <span class="kw">let</span> <span class="ident">tt</span> <span class="op">=</span> <span class="ident">expand_tt</span>(<span class="ident">tt</span>, <span class="ident">ctx</span>)<span class="question-mark">?</span>;
-        <span class="ident">push_fragment</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>, <span class="ident">tt</span>);
+    <span class="kw">for</span> <span class="ident">op</span> <span class="kw">in</span> <span class="ident">parse_template</span>(<span class="ident">template</span>) {
+        <span class="kw">match</span> <span class="ident">op</span><span class="question-mark">?</span> {
+            <span class="ident">Op</span>::<span class="ident">TokenTree</span>(<span class="ident">tt</span> @ <span class="ident">tt</span>::<span class="ident">TokenTree</span>::<span class="ident">Leaf</span>(..)) <span class="op">=&gt;</span> <span class="ident">buf</span>.<span class="ident">push</span>(<span class="ident">tt</span>.<span class="ident">clone</span>()),
+            <span class="ident">Op</span>::<span class="ident">TokenTree</span>(<span class="ident">tt</span>::<span class="ident">TokenTree</span>::<span class="ident">Subtree</span>(<span class="ident">tt</span>)) <span class="op">=&gt;</span> {
+                <span class="kw">let</span> <span class="ident">tt</span> <span class="op">=</span> <span class="ident">expand_subtree</span>(<span class="ident">ctx</span>, <span class="ident">tt</span>)<span class="question-mark">?</span>;
+                <span class="ident">buf</span>.<span class="ident">push</span>(<span class="ident">tt</span>.<span class="ident">into</span>());
+            }
+            <span class="ident">Op</span>::<span class="ident">Var</span> { <span class="ident">name</span>, <span class="ident">kind</span>: <span class="kw">_</span> } <span class="op">=&gt;</span> {
+                <span class="kw">let</span> <span class="ident">fragment</span> <span class="op">=</span> <span class="ident">expand_var</span>(<span class="ident">ctx</span>, <span class="ident">name</span>)<span class="question-mark">?</span>;
+                <span class="ident">push_fragment</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>, <span class="ident">fragment</span>);
+            }
+            <span class="ident">Op</span>::<span class="ident">Repeat</span> { <span class="ident">subtree</span>, <span class="ident">kind</span>, <span class="ident">separator</span> } <span class="op">=&gt;</span> {
+                <span class="kw">let</span> <span class="ident">fragment</span> <span class="op">=</span> <span class="ident">expand_repeat</span>(<span class="ident">ctx</span>, <span class="ident">subtree</span>, <span class="ident">kind</span>, <span class="ident">separator</span>)<span class="question-mark">?</span>;
+                <span class="ident">push_fragment</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>, <span class="ident">fragment</span>)
+            }
+        }
     }
-
     <span class="prelude-val">Ok</span>(<span class="ident">tt</span>::<span class="ident">Subtree</span> { <span class="ident">delimiter</span>: <span class="ident">template</span>.<span class="ident">delimiter</span>, <span class="ident">token_trees</span>: <span class="ident">buf</span> })
 }
 
-<span class="kw">fn</span> <span class="ident">expand_tt</span>(<span class="ident">template</span>: <span class="kw-2">&amp;</span><span class="kw">crate</span>::<span class="ident">TokenTree</span>, <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ExpandCtx</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Fragment</span>, <span class="ident">ExpandError</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="ident">res</span>: <span class="ident">tt</span>::<span class="ident">TokenTree</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">template</span> {
-        <span class="kw">crate</span>::<span class="ident">TokenTree</span>::<span class="ident">Subtree</span>(<span class="ident">subtree</span>) <span class="op">=&gt;</span> <span class="ident">expand_subtree</span>(<span class="ident">subtree</span>, <span class="ident">ctx</span>)<span class="question-mark">?</span>.<span class="ident">into</span>(),
-        <span class="kw">crate</span>::<span class="ident">TokenTree</span>::<span class="ident">Repeat</span>(<span class="ident">repeat</span>) <span class="op">=&gt;</span> {
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">tt</span>::<span class="ident">TokenTree</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
-            <span class="ident">ctx</span>.<span class="ident">nesting</span>.<span class="ident">push</span>(<span class="number">0</span>);
-            <span class="comment">// Dirty hack to make macro-expansion terminate.</span>
-            <span class="comment">// This should be replaced by a propper macro-by-example implementation</span>
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">limit</span> <span class="op">=</span> <span class="number">65536</span>;
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">has_seps</span> <span class="op">=</span> <span class="number">0</span>;
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">counter</span> <span class="op">=</span> <span class="number">0</span>;
-
-            <span class="comment">// We store the old var expanded value, and restore it later</span>
-            <span class="comment">// It is because before this `$repeat`,</span>
-            <span class="comment">// it is possible some variables already expanad in the same subtree</span>
-            <span class="comment">//</span>
-            <span class="comment">// `some_var_expanded` keep check if the deeper subtree has expanded variables</span>
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">some_var_expanded</span> <span class="op">=</span> <span class="bool-val">false</span>;
-            <span class="kw">let</span> <span class="ident">old_var_expanded</span> <span class="op">=</span> <span class="ident">ctx</span>.<span class="ident">var_expanded</span>;
-            <span class="ident">ctx</span>.<span class="ident">var_expanded</span> <span class="op">=</span> <span class="bool-val">false</span>;
-
-            <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">t</span>) <span class="op">=</span> <span class="ident">expand_subtree</span>(<span class="kw-2">&amp;</span><span class="ident">repeat</span>.<span class="ident">subtree</span>, <span class="ident">ctx</span>) {
-                <span class="comment">// if no var expanded in the child, we count it as a fail</span>
-                <span class="kw">if</span> <span class="op">!</span><span class="ident">ctx</span>.<span class="ident">var_expanded</span> {
-                    <span class="kw">break</span>;
-                }
-
-                <span class="comment">// Reset `ctx.var_expandeded` to see if there is other expanded variable</span>
-                <span class="comment">// in the next matching</span>
-                <span class="ident">some_var_expanded</span> <span class="op">=</span> <span class="bool-val">true</span>;
-                <span class="ident">ctx</span>.<span class="ident">var_expanded</span> <span class="op">=</span> <span class="bool-val">false</span>;
-
-                <span class="ident">counter</span> <span class="op">+=</span> <span class="number">1</span>;
-                <span class="ident">limit</span> <span class="op">-=</span> <span class="number">1</span>;
-                <span class="kw">if</span> <span class="ident">limit</span> <span class="op">==</span> <span class="number">0</span> {
-                    <span class="ident">log</span>::<span class="macro">warn</span><span class="macro">!</span>(
-                        <span class="string">&quot;expand_tt excced in repeat pattern exceed limit =&gt; {:#?}\n{:#?}&quot;</span>,
-                        <span class="ident">template</span>,
-                        <span class="ident">ctx</span>
-                    );
-                    <span class="kw">break</span>;
-                }
-
-                <span class="kw">let</span> <span class="ident">idx</span> <span class="op">=</span> <span class="ident">ctx</span>.<span class="ident">nesting</span>.<span class="ident">pop</span>().<span class="ident">unwrap</span>();
-                <span class="ident">ctx</span>.<span class="ident">nesting</span>.<span class="ident">push</span>(<span class="ident">idx</span> <span class="op">+</span> <span class="number">1</span>);
-                <span class="ident">push_subtree</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>, <span class="ident">t</span>);
-
-                <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">sep</span>) <span class="op">=</span> <span class="ident">repeat</span>.<span class="ident">separator</span> {
-                    <span class="kw">match</span> <span class="ident">sep</span> {
-                        <span class="kw">crate</span>::<span class="ident">Separator</span>::<span class="ident">Ident</span>(<span class="ident">ident</span>) <span class="op">=&gt;</span> {
-                            <span class="ident">has_seps</span> <span class="op">=</span> <span class="number">1</span>;
-                            <span class="ident">buf</span>.<span class="ident">push</span>(<span class="ident">tt</span>::<span class="ident">Leaf</span>::<span class="ident">from</span>(<span class="ident">ident</span>.<span class="ident">clone</span>()).<span class="ident">into</span>());
-                        }
-                        <span class="kw">crate</span>::<span class="ident">Separator</span>::<span class="ident">Literal</span>(<span class="ident">lit</span>) <span class="op">=&gt;</span> {
-                            <span class="ident">has_seps</span> <span class="op">=</span> <span class="number">1</span>;
-                            <span class="ident">buf</span>.<span class="ident">push</span>(<span class="ident">tt</span>::<span class="ident">Leaf</span>::<span class="ident">from</span>(<span class="ident">lit</span>.<span class="ident">clone</span>()).<span class="ident">into</span>());
-                        }
-
-                        <span class="kw">crate</span>::<span class="ident">Separator</span>::<span class="ident">Puncts</span>(<span class="ident">puncts</span>) <span class="op">=&gt;</span> {
-                            <span class="ident">has_seps</span> <span class="op">=</span> <span class="ident">puncts</span>.<span class="ident">len</span>();
-                            <span class="kw">for</span> <span class="ident">punct</span> <span class="kw">in</span> <span class="ident">puncts</span> {
-                                <span class="ident">buf</span>.<span class="ident">push</span>(<span class="ident">tt</span>::<span class="ident">Leaf</span>::<span class="ident">from</span>(<span class="kw-2">*</span><span class="ident">punct</span>).<span class="ident">into</span>());
-                            }
-                        }
-                    }
-                }
-
-                <span class="kw">if</span> <span class="kw">let</span> <span class="kw">crate</span>::<span class="ident">RepeatKind</span>::<span class="ident">ZeroOrOne</span> <span class="op">=</span> <span class="ident">repeat</span>.<span class="ident">kind</span> {
-                    <span class="kw">break</span>;
-                }
-            }
-
-            <span class="comment">// Restore the `var_expanded` by combining old one and the new one</span>
-            <span class="ident">ctx</span>.<span class="ident">var_expanded</span> <span class="op">=</span> <span class="ident">some_var_expanded</span> <span class="op">||</span> <span class="ident">old_var_expanded</span>;
-
-            <span class="ident">ctx</span>.<span class="ident">nesting</span>.<span class="ident">pop</span>().<span class="ident">unwrap</span>();
-            <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">has_seps</span> {
-                <span class="ident">buf</span>.<span class="ident">pop</span>();
-            }
-
-            <span class="kw">if</span> <span class="kw">crate</span>::<span class="ident">RepeatKind</span>::<span class="ident">OneOrMore</span> <span class="op">==</span> <span class="ident">repeat</span>.<span class="ident">kind</span> <span class="op">&amp;&amp;</span> <span class="ident">counter</span> <span class="op">==</span> <span class="number">0</span> {
-                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">ExpandError</span>::<span class="ident">UnexpectedToken</span>);
-            }
-
-            <span class="comment">// Check if it is a single token subtree without any delimiter</span>
-            <span class="comment">// e.g {Delimiter:None&gt; [&#39;&gt;&#39;] /Delimiter:None&gt;}</span>
-            <span class="ident">tt</span>::<span class="ident">Subtree</span> { <span class="ident">delimiter</span>: <span class="ident">tt</span>::<span class="ident">Delimiter</span>::<span class="prelude-val">None</span>, <span class="ident">token_trees</span>: <span class="ident">buf</span> }.<span class="ident">into</span>()
+<span class="kw">fn</span> <span class="ident">expand_var</span>(<span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ExpandCtx</span>, <span class="ident">v</span>: <span class="kw-2">&amp;</span><span class="ident">SmolStr</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Fragment</span>, <span class="ident">ExpandError</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">v</span> <span class="op">==</span> <span class="string">&quot;crate&quot;</span> {
+        <span class="comment">// FIXME: Properly handle $crate token</span>
+        <span class="kw">let</span> <span class="ident">tt</span> <span class="op">=</span>
+            <span class="ident">tt</span>::<span class="ident">Leaf</span>::<span class="ident">from</span>(<span class="ident">tt</span>::<span class="ident">Ident</span> { <span class="ident">text</span>: <span class="string">&quot;$crate&quot;</span>.<span class="ident">into</span>(), <span class="ident">id</span>: <span class="ident">tt</span>::<span class="ident">TokenId</span>::<span class="ident">unspecified</span>() })
+                .<span class="ident">into</span>();
+        <span class="ident">Fragment</span>::<span class="ident">Tokens</span>(<span class="ident">tt</span>)
+    } <span class="kw">else</span> <span class="kw">if</span> <span class="op">!</span><span class="ident">ctx</span>.<span class="ident">bindings</span>.<span class="ident">contains</span>(<span class="ident">v</span>) {
+        <span class="comment">// Note that it is possible to have a `$var` inside a macro which is not bound.</span>
+        <span class="comment">// For example:</span>
+        <span class="comment">// ```</span>
+        <span class="comment">// macro_rules! foo {</span>
+        <span class="comment">//     ($a:ident, $b:ident, $c:tt) =&gt; {</span>
+        <span class="comment">//         macro_rules! bar {</span>
+        <span class="comment">//             ($bi:ident) =&gt; {</span>
+        <span class="comment">//                 fn $bi() -&gt; u8 {$c}</span>
+        <span class="comment">//             }</span>
+        <span class="comment">//         }</span>
+        <span class="comment">//     }</span>
+        <span class="comment">// ```</span>
+        <span class="comment">// We just treat it a normal tokens</span>
+        <span class="kw">let</span> <span class="ident">tt</span> <span class="op">=</span> <span class="ident">tt</span>::<span class="ident">Subtree</span> {
+            <span class="ident">delimiter</span>: <span class="ident">tt</span>::<span class="ident">Delimiter</span>::<span class="prelude-val">None</span>,
+            <span class="ident">token_trees</span>: <span class="macro">vec</span><span class="macro">!</span>[
+                <span class="ident">tt</span>::<span class="ident">Leaf</span>::<span class="ident">from</span>(<span class="ident">tt</span>::<span class="ident">Punct</span> { <span class="ident">char</span>: <span class="string">&#39;$&#39;</span>, <span class="ident">spacing</span>: <span class="ident">tt</span>::<span class="ident">Spacing</span>::<span class="ident">Alone</span> }).<span class="ident">into</span>(),
+                <span class="ident">tt</span>::<span class="ident">Leaf</span>::<span class="ident">from</span>(<span class="ident">tt</span>::<span class="ident">Ident</span> { <span class="ident">text</span>: <span class="ident">v</span>.<span class="ident">clone</span>(), <span class="ident">id</span>: <span class="ident">tt</span>::<span class="ident">TokenId</span>::<span class="ident">unspecified</span>() })
+                    .<span class="ident">into</span>(),
+            ],
         }
-        <span class="kw">crate</span>::<span class="ident">TokenTree</span>::<span class="ident">Leaf</span>(<span class="ident">leaf</span>) <span class="op">=&gt;</span> <span class="kw">match</span> <span class="ident">leaf</span> {
-            <span class="kw">crate</span>::<span class="ident">Leaf</span>::<span class="ident">Ident</span>(<span class="ident">ident</span>) <span class="op">=&gt;</span> <span class="ident">tt</span>::<span class="ident">Leaf</span>::<span class="ident">from</span>(<span class="ident">tt</span>::<span class="ident">Ident</span> {
-                <span class="ident">text</span>: <span class="ident">ident</span>.<span class="ident">text</span>.<span class="ident">clone</span>(),
-                <span class="ident">id</span>: <span class="ident">tt</span>::<span class="ident">TokenId</span>::<span class="ident">unspecified</span>(),
-            })
-            .<span class="ident">into</span>(),
-            <span class="kw">crate</span>::<span class="ident">Leaf</span>::<span class="ident">Punct</span>(<span class="ident">punct</span>) <span class="op">=&gt;</span> <span class="ident">tt</span>::<span class="ident">Leaf</span>::<span class="ident">from</span>(<span class="kw-2">*</span><span class="ident">punct</span>).<span class="ident">into</span>(),
-            <span class="kw">crate</span>::<span class="ident">Leaf</span>::<span class="ident">Var</span>(<span class="ident">v</span>) <span class="op">=&gt;</span> {
-                <span class="kw">if</span> <span class="ident">v</span>.<span class="ident">text</span> <span class="op">==</span> <span class="string">&quot;crate&quot;</span> {
-                    <span class="comment">// FIXME: Properly handle $crate token</span>
-                    <span class="ident">tt</span>::<span class="ident">Leaf</span>::<span class="ident">from</span>(<span class="ident">tt</span>::<span class="ident">Ident</span> {
-                        <span class="ident">text</span>: <span class="string">&quot;$crate&quot;</span>.<span class="ident">into</span>(),
-                        <span class="ident">id</span>: <span class="ident">tt</span>::<span class="ident">TokenId</span>::<span class="ident">unspecified</span>(),
-                    })
-                    .<span class="ident">into</span>()
-                } <span class="kw">else</span> <span class="kw">if</span> <span class="op">!</span><span class="ident">ctx</span>.<span class="ident">bindings</span>.<span class="ident">contains</span>(<span class="kw-2">&amp;</span><span class="ident">v</span>.<span class="ident">text</span>) {
-                    <span class="comment">// Note that it is possible to have a `$var` inside a macro which is not bound.</span>
-                    <span class="comment">// For example:</span>
-                    <span class="comment">// ```</span>
-                    <span class="comment">// macro_rules! foo {</span>
-                    <span class="comment">//     ($a:ident, $b:ident, $c:tt) =&gt; {</span>
-                    <span class="comment">//         macro_rules! bar {</span>
-                    <span class="comment">//             ($bi:ident) =&gt; {</span>
-                    <span class="comment">//                 fn $bi() -&gt; u8 {$c}</span>
-                    <span class="comment">//             }</span>
-                    <span class="comment">//         }</span>
-                    <span class="comment">//     }</span>
-                    <span class="comment">// ```</span>
-                    <span class="comment">// We just treat it a normal tokens</span>
-                    <span class="ident">tt</span>::<span class="ident">Subtree</span> {
-                        <span class="ident">delimiter</span>: <span class="ident">tt</span>::<span class="ident">Delimiter</span>::<span class="prelude-val">None</span>,
-                        <span class="ident">token_trees</span>: <span class="macro">vec</span><span class="macro">!</span>[
-                            <span class="ident">tt</span>::<span class="ident">Leaf</span>::<span class="ident">from</span>(<span class="ident">tt</span>::<span class="ident">Punct</span> { <span class="ident">char</span>: <span class="string">&#39;$&#39;</span>, <span class="ident">spacing</span>: <span class="ident">tt</span>::<span class="ident">Spacing</span>::<span class="ident">Alone</span> })
-                                .<span class="ident">into</span>(),
-                            <span class="ident">tt</span>::<span class="ident">Leaf</span>::<span class="ident">from</span>(<span class="ident">tt</span>::<span class="ident">Ident</span> {
-                                <span class="ident">text</span>: <span class="ident">v</span>.<span class="ident">text</span>.<span class="ident">clone</span>(),
-                                <span class="ident">id</span>: <span class="ident">tt</span>::<span class="ident">TokenId</span>::<span class="ident">unspecified</span>(),
-                            })
-                            .<span class="ident">into</span>(),
-                        ],
+        .<span class="ident">into</span>();
+        <span class="ident">Fragment</span>::<span class="ident">Tokens</span>(<span class="ident">tt</span>)
+    } <span class="kw">else</span> {
+        <span class="kw">let</span> <span class="ident">fragment</span> <span class="op">=</span> <span class="ident">ctx</span>.<span class="ident">bindings</span>.<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="ident">v</span>, <span class="kw-2">&amp;</span><span class="ident">ctx</span>.<span class="ident">nesting</span>)<span class="question-mark">?</span>.<span class="ident">clone</span>();
+        <span class="ident">ctx</span>.<span class="ident">var_expanded</span> <span class="op">=</span> <span class="bool-val">true</span>;
+        <span class="ident">fragment</span>
+    };
+    <span class="prelude-val">Ok</span>(<span class="ident">res</span>)
+}
+
+<span class="kw">fn</span> <span class="ident">expand_repeat</span>(
+    <span class="ident">ctx</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ExpandCtx</span>,
+    <span class="ident">template</span>: <span class="kw-2">&amp;</span><span class="ident">tt</span>::<span class="ident">Subtree</span>,
+    <span class="ident">kind</span>: <span class="ident">RepeatKind</span>,
+    <span class="ident">separator</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Separator</span><span class="op">&gt;</span>,
+) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Fragment</span>, <span class="ident">ExpandError</span><span class="op">&gt;</span> {
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">tt</span>::<span class="ident">TokenTree</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
+    <span class="ident">ctx</span>.<span class="ident">nesting</span>.<span class="ident">push</span>(<span class="number">0</span>);
+    <span class="comment">// Dirty hack to make macro-expansion terminate.</span>
+    <span class="comment">// This should be replaced by a propper macro-by-example implementation</span>
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">limit</span> <span class="op">=</span> <span class="number">65536</span>;
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">has_seps</span> <span class="op">=</span> <span class="number">0</span>;
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">counter</span> <span class="op">=</span> <span class="number">0</span>;
+
+    <span class="comment">// We store the old var expanded value, and restore it later</span>
+    <span class="comment">// It is because before this `$repeat`,</span>
+    <span class="comment">// it is possible some variables already expanad in the same subtree</span>
+    <span class="comment">//</span>
+    <span class="comment">// `some_var_expanded` keep check if the deeper subtree has expanded variables</span>
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">some_var_expanded</span> <span class="op">=</span> <span class="bool-val">false</span>;
+    <span class="kw">let</span> <span class="ident">old_var_expanded</span> <span class="op">=</span> <span class="ident">ctx</span>.<span class="ident">var_expanded</span>;
+    <span class="ident">ctx</span>.<span class="ident">var_expanded</span> <span class="op">=</span> <span class="bool-val">false</span>;
+
+    <span class="kw">while</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="kw-2">mut</span> <span class="ident">t</span>) <span class="op">=</span> <span class="ident">expand_subtree</span>(<span class="ident">ctx</span>, <span class="ident">template</span>) {
+        <span class="ident">t</span>.<span class="ident">delimiter</span> <span class="op">=</span> <span class="ident">tt</span>::<span class="ident">Delimiter</span>::<span class="prelude-val">None</span>;
+        <span class="comment">// if no var expanded in the child, we count it as a fail</span>
+        <span class="kw">if</span> <span class="op">!</span><span class="ident">ctx</span>.<span class="ident">var_expanded</span> {
+            <span class="kw">break</span>;
+        }
+
+        <span class="comment">// Reset `ctx.var_expandeded` to see if there is other expanded variable</span>
+        <span class="comment">// in the next matching</span>
+        <span class="ident">some_var_expanded</span> <span class="op">=</span> <span class="bool-val">true</span>;
+        <span class="ident">ctx</span>.<span class="ident">var_expanded</span> <span class="op">=</span> <span class="bool-val">false</span>;
+
+        <span class="ident">counter</span> <span class="op">+=</span> <span class="number">1</span>;
+        <span class="ident">limit</span> <span class="op">-=</span> <span class="number">1</span>;
+        <span class="kw">if</span> <span class="ident">limit</span> <span class="op">==</span> <span class="number">0</span> {
+            <span class="ident">log</span>::<span class="macro">warn</span><span class="macro">!</span>(
+                <span class="string">&quot;expand_tt excced in repeat pattern exceed limit =&gt; {:#?}\n{:#?}&quot;</span>,
+                <span class="ident">template</span>,
+                <span class="ident">ctx</span>
+            );
+            <span class="kw">break</span>;
+        }
+
+        <span class="kw">let</span> <span class="ident">idx</span> <span class="op">=</span> <span class="ident">ctx</span>.<span class="ident">nesting</span>.<span class="ident">pop</span>().<span class="ident">unwrap</span>();
+        <span class="ident">ctx</span>.<span class="ident">nesting</span>.<span class="ident">push</span>(<span class="ident">idx</span> <span class="op">+</span> <span class="number">1</span>);
+        <span class="ident">push_subtree</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>, <span class="ident">t</span>);
+
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">sep</span>) <span class="op">=</span> <span class="ident">separator</span> {
+            <span class="kw">match</span> <span class="ident">sep</span> {
+                <span class="ident">Separator</span>::<span class="ident">Ident</span>(<span class="ident">ident</span>) <span class="op">=&gt;</span> {
+                    <span class="ident">has_seps</span> <span class="op">=</span> <span class="number">1</span>;
+                    <span class="ident">buf</span>.<span class="ident">push</span>(<span class="ident">tt</span>::<span class="ident">Leaf</span>::<span class="ident">from</span>(<span class="ident">ident</span>.<span class="ident">clone</span>()).<span class="ident">into</span>());
+                }
+                <span class="ident">Separator</span>::<span class="ident">Literal</span>(<span class="ident">lit</span>) <span class="op">=&gt;</span> {
+                    <span class="ident">has_seps</span> <span class="op">=</span> <span class="number">1</span>;
+                    <span class="ident">buf</span>.<span class="ident">push</span>(<span class="ident">tt</span>::<span class="ident">Leaf</span>::<span class="ident">from</span>(<span class="ident">lit</span>.<span class="ident">clone</span>()).<span class="ident">into</span>());
+                }
+
+                <span class="ident">Separator</span>::<span class="ident">Puncts</span>(<span class="ident">puncts</span>) <span class="op">=&gt;</span> {
+                    <span class="ident">has_seps</span> <span class="op">=</span> <span class="ident">puncts</span>.<span class="ident">len</span>();
+                    <span class="kw">for</span> <span class="ident">punct</span> <span class="kw">in</span> <span class="ident">puncts</span> {
+                        <span class="ident">buf</span>.<span class="ident">push</span>(<span class="ident">tt</span>::<span class="ident">Leaf</span>::<span class="ident">from</span>(<span class="kw-2">*</span><span class="ident">punct</span>).<span class="ident">into</span>());
                     }
-                    .<span class="ident">into</span>()
-                } <span class="kw">else</span> {
-                    <span class="kw">let</span> <span class="ident">fragment</span> <span class="op">=</span> <span class="ident">ctx</span>.<span class="ident">bindings</span>.<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="ident">v</span>.<span class="ident">text</span>, <span class="kw-2">&amp;</span><span class="ident">ctx</span>.<span class="ident">nesting</span>)<span class="question-mark">?</span>.<span class="ident">clone</span>();
-                    <span class="ident">ctx</span>.<span class="ident">var_expanded</span> <span class="op">=</span> <span class="bool-val">true</span>;
-                    <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">fragment</span>);
                 }
             }
-            <span class="kw">crate</span>::<span class="ident">Leaf</span>::<span class="ident">Literal</span>(<span class="ident">l</span>) <span class="op">=&gt;</span> <span class="ident">tt</span>::<span class="ident">Leaf</span>::<span class="ident">from</span>(<span class="ident">tt</span>::<span class="ident">Literal</span> { <span class="ident">text</span>: <span class="ident">l</span>.<span class="ident">text</span>.<span class="ident">clone</span>() }).<span class="ident">into</span>(),
-        },
-    };
-    <span class="prelude-val">Ok</span>(<span class="ident">Fragment</span>::<span class="ident">Tokens</span>(<span class="ident">res</span>))
+        }
+
+        <span class="kw">if</span> <span class="ident">RepeatKind</span>::<span class="ident">ZeroOrOne</span> <span class="op">==</span> <span class="ident">kind</span> {
+            <span class="kw">break</span>;
+        }
+    }
+
+    <span class="comment">// Restore the `var_expanded` by combining old one and the new one</span>
+    <span class="ident">ctx</span>.<span class="ident">var_expanded</span> <span class="op">=</span> <span class="ident">some_var_expanded</span> <span class="op">||</span> <span class="ident">old_var_expanded</span>;
+
+    <span class="ident">ctx</span>.<span class="ident">nesting</span>.<span class="ident">pop</span>().<span class="ident">unwrap</span>();
+    <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">has_seps</span> {
+        <span class="ident">buf</span>.<span class="ident">pop</span>();
+    }
+
+    <span class="kw">if</span> <span class="ident">RepeatKind</span>::<span class="ident">OneOrMore</span> <span class="op">==</span> <span class="ident">kind</span> <span class="op">&amp;&amp;</span> <span class="ident">counter</span> <span class="op">==</span> <span class="number">0</span> {
+        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">ExpandError</span>::<span class="ident">UnexpectedToken</span>);
+    }
+
+    <span class="comment">// Check if it is a single token subtree without any delimiter</span>
+    <span class="comment">// e.g {Delimiter:None&gt; [&#39;&gt;&#39;] /Delimiter:None&gt;}</span>
+    <span class="kw">let</span> <span class="ident">tt</span> <span class="op">=</span> <span class="ident">tt</span>::<span class="ident">Subtree</span> { <span class="ident">delimiter</span>: <span class="ident">tt</span>::<span class="ident">Delimiter</span>::<span class="prelude-val">None</span>, <span class="ident">token_trees</span>: <span class="ident">buf</span> }.<span class="ident">into</span>();
+    <span class="prelude-val">Ok</span>(<span class="ident">Fragment</span>::<span class="ident">Tokens</span>(<span class="ident">tt</span>))
 }
 
 <span class="kw">fn</span> <span class="ident">push_fragment</span>(<span class="ident">buf</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">tt</span>::<span class="ident">TokenTree</span><span class="op">&gt;</span>, <span class="ident">fragment</span>: <span class="ident">Fragment</span>) {
