@@ -839,9 +839,9 @@
                 }
             }
             <span class="prelude-val">Some</span>(<span class="ident">AssocItem</span>(<span class="ident">it</span>)) <span class="op">=&gt;</span> <span class="ident">res</span>.<span class="ident">extend</span>(<span class="kw">match</span> <span class="ident">it</span> {
-                <span class="ident">hir</span>::<span class="ident">AssocItem</span>::<span class="ident">Function</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="ident">from_def_source</span>(<span class="ident">db</span>, <span class="ident">it</span>),
-                <span class="ident">hir</span>::<span class="ident">AssocItem</span>::<span class="ident">Const</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="ident">from_def_source</span>(<span class="ident">db</span>, <span class="ident">it</span>),
-                <span class="ident">hir</span>::<span class="ident">AssocItem</span>::<span class="ident">TypeAlias</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="ident">from_def_source</span>(<span class="ident">db</span>, <span class="ident">it</span>),
+                <span class="ident">hir</span>::<span class="ident">ImplItem</span>::<span class="ident">Method</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="ident">from_def_source</span>(<span class="ident">db</span>, <span class="ident">it</span>),
+                <span class="ident">hir</span>::<span class="ident">ImplItem</span>::<span class="ident">Const</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="ident">from_def_source</span>(<span class="ident">db</span>, <span class="ident">it</span>),
+                <span class="ident">hir</span>::<span class="ident">ImplItem</span>::<span class="ident">TypeAlias</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="ident">from_def_source</span>(<span class="ident">db</span>, <span class="ident">it</span>),
             }),
             <span class="prelude-val">Some</span>(<span class="ident">Def</span>(<span class="ident">it</span>)) <span class="op">=&gt;</span> {
                 <span class="kw">match</span> <span class="ident">it</span> {

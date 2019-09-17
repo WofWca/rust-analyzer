@@ -1693,7 +1693,8 @@
     <span class="ident">resolve</span>::{<span class="ident">ResolveValueResult</span>, <span class="ident">Resolver</span>, <span class="ident">TypeNs</span>, <span class="ident">ValueNs</span>},
     <span class="ident">ty</span>::<span class="ident">infer</span>::<span class="ident">diagnostics</span>::<span class="ident">InferenceDiagnostic</span>,
     <span class="ident">type_ref</span>::{<span class="ident">Mutability</span>, <span class="ident">TypeRef</span>},
-    <span class="ident">Adt</span>, <span class="ident">AssocItem</span>, <span class="ident">ConstData</span>, <span class="ident">DefWithBody</span>, <span class="ident">FnData</span>, <span class="ident">Function</span>, <span class="ident">HasBody</span>, <span class="ident">Name</span>, <span class="ident">Path</span>, <span class="ident">StructField</span>,
+    <span class="ident">Adt</span>, <span class="ident">ConstData</span>, <span class="ident">DefWithBody</span>, <span class="ident">Either</span>, <span class="ident">FnData</span>, <span class="ident">Function</span>, <span class="ident">HasBody</span>, <span class="ident">ImplItem</span>, <span class="ident">Name</span>, <span class="ident">Path</span>,
+    <span class="ident">StructField</span>,
 };
 
 <span class="kw">mod</span> <span class="ident">unify</span>;
@@ -1765,7 +1766,7 @@
     <span class="doccomment">/// For each struct literal, records the variant it resolves to.</span>
     <span class="ident">variant_resolutions</span>: <span class="ident">FxHashMap</span><span class="op">&lt;</span><span class="ident">ExprOrPatId</span>, <span class="ident">VariantDef</span><span class="op">&gt;</span>,
     <span class="doccomment">/// For each associated item record what it resolves to</span>
-    <span class="ident">assoc_resolutions</span>: <span class="ident">FxHashMap</span><span class="op">&lt;</span><span class="ident">ExprOrPatId</span>, <span class="ident">AssocItem</span><span class="op">&gt;</span>,
+    <span class="ident">assoc_resolutions</span>: <span class="ident">FxHashMap</span><span class="op">&lt;</span><span class="ident">ExprOrPatId</span>, <span class="ident">ImplItem</span><span class="op">&gt;</span>,
     <span class="ident">diagnostics</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">InferenceDiagnostic</span><span class="op">&gt;</span>,
     <span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">type_of_expr</span>: <span class="ident">ArenaMap</span><span class="op">&lt;</span><span class="ident">ExprId</span>, <span class="ident">Ty</span><span class="op">&gt;</span>,
     <span class="kw">pub</span>(<span class="kw">super</span>) <span class="ident">type_of_pat</span>: <span class="ident">ArenaMap</span><span class="op">&lt;</span><span class="ident">PatId</span>, <span class="ident">Ty</span><span class="op">&gt;</span>,
@@ -1785,10 +1786,10 @@
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">variant_resolution_for_pat</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">id</span>: <span class="ident">PatId</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">VariantDef</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">variant_resolutions</span>.<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="ident">id</span>.<span class="ident">into</span>()).<span class="ident">copied</span>()
     }
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">assoc_resolutions_for_expr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">id</span>: <span class="ident">ExprId</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">AssocItem</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">assoc_resolutions_for_expr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">id</span>: <span class="ident">ExprId</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ImplItem</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">assoc_resolutions</span>.<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="ident">id</span>.<span class="ident">into</span>()).<span class="ident">copied</span>()
     }
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">assoc_resolutions_for_pat</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">id</span>: <span class="ident">PatId</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">AssocItem</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">assoc_resolutions_for_pat</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">id</span>: <span class="ident">PatId</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ImplItem</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">assoc_resolutions</span>.<span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="ident">id</span>.<span class="ident">into</span>()).<span class="ident">copied</span>()
     }
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">type_mismatch_for_expr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">expr</span>: <span class="ident">ExprId</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">TypeMismatch</span><span class="op">&gt;</span> {
@@ -1879,7 +1880,7 @@
         <span class="self">self</span>.<span class="ident">result</span>.<span class="ident">variant_resolutions</span>.<span class="ident">insert</span>(<span class="ident">id</span>, <span class="ident">variant</span>);
     }
 
-    <span class="kw">fn</span> <span class="ident">write_assoc_resolution</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">id</span>: <span class="ident">ExprOrPatId</span>, <span class="ident">item</span>: <span class="ident">AssocItem</span>) {
+    <span class="kw">fn</span> <span class="ident">write_assoc_resolution</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">id</span>: <span class="ident">ExprOrPatId</span>, <span class="ident">item</span>: <span class="ident">ImplItem</span>) {
         <span class="self">self</span>.<span class="ident">result</span>.<span class="ident">assoc_resolutions</span>.<span class="ident">insert</span>(<span class="ident">id</span>, <span class="ident">item</span>);
     }
 
@@ -2112,27 +2113,16 @@
     }
 
     <span class="kw">fn</span> <span class="ident">infer_path_expr</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">resolver</span>: <span class="kw-2">&amp;</span><span class="ident">Resolver</span>, <span class="ident">path</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span>, <span class="ident">id</span>: <span class="ident">ExprOrPatId</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Ty</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> (<span class="ident">value</span>, <span class="ident">self_subst</span>) <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="kw">crate</span>::<span class="ident">PathKind</span>::<span class="ident">Type</span>(<span class="ident">type_ref</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">path</span>.<span class="ident">kind</span> {
-            <span class="kw">if</span> <span class="ident">path</span>.<span class="ident">segments</span>.<span class="ident">is_empty</span>() {
-                <span class="comment">// This can&#39;t actually happen syntax-wise</span>
-                <span class="kw">return</span> <span class="prelude-val">None</span>;
-            }
-            <span class="kw">let</span> <span class="ident">ty</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">make_ty</span>(<span class="ident">type_ref</span>);
-            <span class="kw">let</span> <span class="ident">remaining_segments_for_ty</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">path</span>.<span class="ident">segments</span>[..<span class="ident">path</span>.<span class="ident">segments</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="number">1</span>];
-            <span class="kw">let</span> <span class="ident">ty</span> <span class="op">=</span> <span class="ident">Ty</span>::<span class="ident">from_type_relative_path</span>(<span class="self">self</span>.<span class="ident">db</span>, <span class="ident">resolver</span>, <span class="ident">ty</span>, <span class="ident">remaining_segments_for_ty</span>);
-            <span class="self">self</span>.<span class="ident">resolve_ty_assoc_item</span>(
-                <span class="ident">ty</span>,
-                <span class="ident">path</span>.<span class="ident">segments</span>.<span class="ident">last</span>().<span class="ident">expect</span>(<span class="string">&quot;path had at least one segment&quot;</span>),
-                <span class="ident">id</span>,
-            )<span class="question-mark">?</span>
-        } <span class="kw">else</span> {
-            <span class="kw">let</span> <span class="ident">value_or_partial</span> <span class="op">=</span> <span class="ident">resolver</span>.<span class="ident">resolve_path_in_value_ns</span>(<span class="self">self</span>.<span class="ident">db</span>, <span class="kw-2">&amp;</span><span class="ident">path</span>)<span class="question-mark">?</span>;
+        <span class="kw">let</span> <span class="ident">value_or_partial</span> <span class="op">=</span> <span class="ident">resolver</span>.<span class="ident">resolve_path_in_value_ns</span>(<span class="self">self</span>.<span class="ident">db</span>, <span class="kw-2">&amp;</span><span class="ident">path</span>)<span class="question-mark">?</span>;
 
-            <span class="kw">match</span> <span class="ident">value_or_partial</span> {
-                <span class="ident">ResolveValueResult</span>::<span class="ident">ValueNs</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> (<span class="ident">it</span>, <span class="prelude-val">None</span>),
-                <span class="ident">ResolveValueResult</span>::<span class="ident">Partial</span>(<span class="ident">def</span>, <span class="ident">remaining_index</span>) <span class="op">=&gt;</span> {
-                    <span class="self">self</span>.<span class="ident">resolve_assoc_item</span>(<span class="ident">def</span>, <span class="ident">path</span>, <span class="ident">remaining_index</span>, <span class="ident">id</span>)<span class="question-mark">?</span>
-                }
+        <span class="kw">let</span> (<span class="ident">value</span>, <span class="ident">self_subst</span>) <span class="op">=</span> <span class="kw">match</span> <span class="ident">value_or_partial</span> {
+            <span class="ident">ResolveValueResult</span>::<span class="ident">ValueNs</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> (<span class="ident">it</span>, <span class="prelude-val">None</span>),
+            <span class="ident">ResolveValueResult</span>::<span class="ident">Partial</span>(<span class="ident">def</span>, <span class="ident">remaining_index</span>) <span class="op">=&gt;</span> {
+                <span class="self">self</span>.<span class="ident">resolve_assoc_item</span>(<span class="ident">Either</span>::<span class="ident">A</span>(<span class="ident">def</span>), <span class="ident">path</span>, <span class="ident">remaining_index</span>, <span class="ident">id</span>)<span class="question-mark">?</span>
+            }
+            <span class="ident">ResolveValueResult</span>::<span class="ident">TypeRef</span>(<span class="ident">type_ref</span>) <span class="op">=&gt;</span> {
+                <span class="kw">let</span> <span class="ident">ty</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">make_ty</span>(<span class="ident">type_ref</span>);
+                <span class="self">self</span>.<span class="ident">resolve_assoc_item</span>(<span class="ident">Either</span>::<span class="ident">B</span>(<span class="ident">ty</span>), <span class="ident">path</span>, <span class="number">0</span>, <span class="ident">id</span>)<span class="question-mark">?</span>
             }
         };
 
@@ -2163,91 +2153,101 @@
 
     <span class="kw">fn</span> <span class="ident">resolve_assoc_item</span>(
         <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>,
-        <span class="ident">def</span>: <span class="ident">TypeNs</span>,
+        <span class="kw-2">mut</span> <span class="ident">def_or_ty</span>: <span class="ident">Either</span><span class="op">&lt;</span><span class="ident">TypeNs</span>, <span class="ident">Ty</span><span class="op">&gt;</span>,
         <span class="ident">path</span>: <span class="kw-2">&amp;</span><span class="ident">Path</span>,
         <span class="ident">remaining_index</span>: <span class="ident">usize</span>,
         <span class="ident">id</span>: <span class="ident">ExprOrPatId</span>,
     ) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">ValueNs</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Substs</span><span class="op">&gt;</span>)<span class="op">&gt;</span> {
         <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">remaining_index</span> <span class="op">&lt;</span> <span class="ident">path</span>.<span class="ident">segments</span>.<span class="ident">len</span>());
-        <span class="comment">// there may be more intermediate segments between the resolved one and</span>
-        <span class="comment">// the end. Only the last segment needs to be resolved to a value; from</span>
-        <span class="comment">// the segments before that, we need to get either a type or a trait ref.</span>
-
-        <span class="kw">let</span> <span class="ident">resolved_segment</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">path</span>.<span class="ident">segments</span>[<span class="ident">remaining_index</span> <span class="op">-</span> <span class="number">1</span>];
-        <span class="kw">let</span> <span class="ident">remaining_segments</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">path</span>.<span class="ident">segments</span>[<span class="ident">remaining_index</span>..];
-        <span class="kw">let</span> <span class="ident">is_before_last</span> <span class="op">=</span> <span class="ident">remaining_segments</span>.<span class="ident">len</span>() <span class="op">==</span> <span class="number">1</span>;
-
-        <span class="kw">match</span> (<span class="ident">def</span>, <span class="ident">is_before_last</span>) {
-            (<span class="ident">TypeNs</span>::<span class="ident">Trait</span>(<span class="ident">_trait</span>), <span class="bool-val">true</span>) <span class="op">=&gt;</span> {
-                <span class="comment">// FIXME Associated item of trait, e.g. `Default::default`</span>
-                <span class="prelude-val">None</span>
-            }
-            (<span class="ident">def</span>, <span class="kw">_</span>) <span class="op">=&gt;</span> {
-                <span class="comment">// Either we already have a type (e.g. `Vec::new`), or we have a</span>
-                <span class="comment">// trait but it&#39;s not the last segment, so the next segment</span>
-                <span class="comment">// should resolve to an associated type of that trait (e.g. `&lt;T</span>
-                <span class="comment">// as Iterator&gt;::Item::default`)</span>
-                <span class="kw">let</span> <span class="ident">remaining_segments_for_ty</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">remaining_segments</span>[..<span class="ident">remaining_segments</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="number">1</span>];
-                <span class="kw">let</span> <span class="ident">ty</span> <span class="op">=</span> <span class="ident">Ty</span>::<span class="ident">from_partly_resolved_hir_path</span>(
-                    <span class="self">self</span>.<span class="ident">db</span>,
-                    <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">resolver</span>,
-                    <span class="ident">def</span>,
-                    <span class="ident">resolved_segment</span>,
-                    <span class="ident">remaining_segments_for_ty</span>,
-                );
-                <span class="kw">if</span> <span class="kw">let</span> <span class="ident">Ty</span>::<span class="ident">Unknown</span> <span class="op">=</span> <span class="ident">ty</span> {
-                    <span class="kw">return</span> <span class="prelude-val">None</span>;
-                }
-
-                <span class="kw">let</span> <span class="ident">segment</span> <span class="op">=</span>
-                    <span class="ident">remaining_segments</span>.<span class="ident">last</span>().<span class="ident">expect</span>(<span class="string">&quot;there should be at least one segment here&quot;</span>);
-
-                <span class="self">self</span>.<span class="ident">resolve_ty_assoc_item</span>(<span class="ident">ty</span>, <span class="ident">segment</span>, <span class="ident">id</span>)
-            }
-        }
-    }
-
-    <span class="kw">fn</span> <span class="ident">resolve_ty_assoc_item</span>(
-        <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>,
-        <span class="ident">ty</span>: <span class="ident">Ty</span>,
-        <span class="ident">segment</span>: <span class="kw-2">&amp;</span><span class="kw">crate</span>::<span class="ident">path</span>::<span class="ident">PathSegment</span>,
-        <span class="ident">id</span>: <span class="ident">ExprOrPatId</span>,
-    ) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">ValueNs</span>, <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Substs</span><span class="op">&gt;</span>)<span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="ident">Ty</span>::<span class="ident">Unknown</span> <span class="op">=</span> <span class="ident">ty</span> {
-            <span class="kw">return</span> <span class="prelude-val">None</span>;
-        }
-
         <span class="kw">let</span> <span class="ident">krate</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">resolver</span>.<span class="ident">krate</span>()<span class="question-mark">?</span>;
 
-        <span class="comment">// Find impl</span>
-        <span class="comment">// FIXME: consider trait candidates</span>
-        <span class="kw">let</span> <span class="ident">item</span> <span class="op">=</span> <span class="ident">ty</span>.<span class="ident">clone</span>().<span class="ident">iterate_impl_items</span>(<span class="self">self</span>.<span class="ident">db</span>, <span class="ident">krate</span>, <span class="op">|</span><span class="ident">item</span><span class="op">|</span> <span class="kw">match</span> <span class="ident">item</span> {
-            <span class="ident">AssocItem</span>::<span class="ident">Function</span>(<span class="ident">func</span>) <span class="op">=&gt;</span> {
-                <span class="kw">if</span> <span class="ident">segment</span>.<span class="ident">name</span> <span class="op">==</span> <span class="ident">func</span>.<span class="ident">name</span>(<span class="self">self</span>.<span class="ident">db</span>) {
-                    <span class="prelude-val">Some</span>(<span class="ident">AssocItem</span>::<span class="ident">Function</span>(<span class="ident">func</span>))
-                } <span class="kw">else</span> {
-                    <span class="prelude-val">None</span>
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ty</span> <span class="op">=</span> <span class="ident">Ty</span>::<span class="ident">Unknown</span>;
+
+        <span class="comment">// resolve intermediate segments</span>
+        <span class="kw">for</span> (<span class="ident">i</span>, <span class="ident">segment</span>) <span class="kw">in</span> <span class="ident">path</span>.<span class="ident">segments</span>[<span class="ident">remaining_index</span>..].<span class="ident">iter</span>().<span class="ident">enumerate</span>() {
+            <span class="kw">let</span> <span class="ident">is_last_segment</span> <span class="op">=</span> <span class="ident">i</span> <span class="op">==</span> <span class="ident">path</span>.<span class="ident">segments</span>[<span class="ident">remaining_index</span>..].<span class="ident">len</span>() <span class="op">-</span> <span class="number">1</span>;
+            <span class="ident">ty</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">def_or_ty</span> {
+                <span class="ident">Either</span>::<span class="ident">A</span>(<span class="ident">def</span>) <span class="op">=&gt;</span> {
+                    <span class="kw">let</span> <span class="ident">typable</span>: <span class="ident">TypableDef</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">def</span> {
+                        <span class="ident">TypeNs</span>::<span class="ident">Adt</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="ident">it</span>.<span class="ident">into</span>(),
+                        <span class="ident">TypeNs</span>::<span class="ident">TypeAlias</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="ident">it</span>.<span class="ident">into</span>(),
+                        <span class="ident">TypeNs</span>::<span class="ident">BuiltinType</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="ident">it</span>.<span class="ident">into</span>(),
+                        <span class="comment">// FIXME associated item of traits, generics, and Self</span>
+                        <span class="ident">TypeNs</span>::<span class="ident">Trait</span>(<span class="kw">_</span>) <span class="op">|</span> <span class="ident">TypeNs</span>::<span class="ident">GenericParam</span>(<span class="kw">_</span>) <span class="op">|</span> <span class="ident">TypeNs</span>::<span class="ident">SelfType</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> {
+                            <span class="kw">return</span> <span class="prelude-val">None</span>;
+                        }
+                        <span class="comment">// FIXME: report error here</span>
+                        <span class="ident">TypeNs</span>::<span class="ident">EnumVariant</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">None</span>,
+                    };
+
+                    <span class="kw">let</span> <span class="ident">ty</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">db</span>.<span class="ident">type_for_def</span>(<span class="ident">typable</span>, <span class="ident">Namespace</span>::<span class="ident">Types</span>);
+
+                    <span class="comment">// For example, this substs will take `Gen::*&lt;u32&gt;*::make`</span>
+                    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">remaining_index</span> <span class="op">&gt;</span> <span class="number">0</span>);
+                    <span class="kw">let</span> <span class="ident">substs</span> <span class="op">=</span> <span class="ident">Ty</span>::<span class="ident">substs_from_path_segment</span>(
+                        <span class="self">self</span>.<span class="ident">db</span>,
+                        <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">resolver</span>,
+                        <span class="kw-2">&amp;</span><span class="ident">path</span>.<span class="ident">segments</span>[<span class="ident">remaining_index</span> <span class="op">+</span> <span class="ident">i</span> <span class="op">-</span> <span class="number">1</span>],
+                        <span class="ident">typable</span>,
+                    );
+                    <span class="ident">ty</span>.<span class="ident">subst</span>(<span class="kw-2">&amp;</span><span class="ident">substs</span>)
                 }
+                <span class="ident">Either</span>::<span class="ident">B</span>(<span class="ident">ty</span>) <span class="op">=&gt;</span> <span class="ident">ty</span>,
+            };
+            <span class="kw">if</span> <span class="ident">is_last_segment</span> {
+                <span class="kw">break</span>;
             }
 
-            <span class="ident">AssocItem</span>::<span class="ident">Const</span>(<span class="ident">konst</span>) <span class="op">=&gt;</span> {
-                <span class="kw">if</span> <span class="ident">konst</span>.<span class="ident">name</span>(<span class="self">self</span>.<span class="ident">db</span>).<span class="ident">map_or</span>(<span class="bool-val">false</span>, <span class="op">|</span><span class="ident">n</span><span class="op">|</span> <span class="ident">n</span> <span class="op">==</span> <span class="ident">segment</span>.<span class="ident">name</span>) {
-                    <span class="prelude-val">Some</span>(<span class="ident">AssocItem</span>::<span class="ident">Const</span>(<span class="ident">konst</span>))
-                } <span class="kw">else</span> {
-                    <span class="prelude-val">None</span>
+            <span class="comment">// Attempt to find an impl_item for the type which has a name matching</span>
+            <span class="comment">// the current segment</span>
+            <span class="ident">log</span>::<span class="macro">debug</span><span class="macro">!</span>(<span class="string">&quot;looking for path segment: {:?}&quot;</span>, <span class="ident">segment</span>);
+
+            <span class="kw">let</span> <span class="ident">ty</span> <span class="op">=</span> <span class="ident">mem</span>::<span class="ident">replace</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ty</span>, <span class="ident">Ty</span>::<span class="ident">Unknown</span>);
+            <span class="ident">def_or_ty</span> <span class="op">=</span> <span class="ident">ty</span>.<span class="ident">iterate_impl_items</span>(<span class="self">self</span>.<span class="ident">db</span>, <span class="ident">krate</span>, <span class="op">|</span><span class="ident">item</span><span class="op">|</span> {
+                <span class="kw">match</span> <span class="ident">item</span> {
+                    <span class="kw">crate</span>::<span class="ident">ImplItem</span>::<span class="ident">Method</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
+                    <span class="kw">crate</span>::<span class="ident">ImplItem</span>::<span class="ident">Const</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
+
+                    <span class="comment">// FIXME: Resolve associated types</span>
+                    <span class="kw">crate</span>::<span class="ident">ImplItem</span>::<span class="ident">TypeAlias</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> {
+                        <span class="comment">// Some(Either::A(TypeNs::TypeAlias(..)))</span>
+                        <span class="prelude-val">None</span>
+                    }
                 }
+            })<span class="question-mark">?</span>;
+        }
+
+        <span class="kw">let</span> <span class="ident">segment</span> <span class="op">=</span> <span class="ident">path</span>.<span class="ident">segments</span>.<span class="ident">last</span>().<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="ident">def</span> <span class="op">=</span> <span class="ident">ty</span>.<span class="ident">clone</span>().<span class="ident">iterate_impl_items</span>(<span class="self">self</span>.<span class="ident">db</span>, <span class="ident">krate</span>, <span class="op">|</span><span class="ident">item</span><span class="op">|</span> {
+            <span class="kw">let</span> <span class="ident">matching_def</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">ValueNs</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">item</span> {
+                <span class="kw">crate</span>::<span class="ident">ImplItem</span>::<span class="ident">Method</span>(<span class="ident">func</span>) <span class="op">=&gt;</span> {
+                    <span class="kw">if</span> <span class="ident">segment</span>.<span class="ident">name</span> <span class="op">==</span> <span class="ident">func</span>.<span class="ident">name</span>(<span class="self">self</span>.<span class="ident">db</span>) {
+                        <span class="prelude-val">Some</span>(<span class="ident">ValueNs</span>::<span class="ident">Function</span>(<span class="ident">func</span>))
+                    } <span class="kw">else</span> {
+                        <span class="prelude-val">None</span>
+                    }
+                }
+
+                <span class="kw">crate</span>::<span class="ident">ImplItem</span>::<span class="ident">Const</span>(<span class="ident">konst</span>) <span class="op">=&gt;</span> {
+                    <span class="kw">let</span> <span class="ident">data</span> <span class="op">=</span> <span class="ident">konst</span>.<span class="ident">data</span>(<span class="self">self</span>.<span class="ident">db</span>);
+                    <span class="kw">if</span> <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="ident">segment</span>.<span class="ident">name</span>) <span class="op">==</span> <span class="ident">data</span>.<span class="ident">name</span>() {
+                        <span class="prelude-val">Some</span>(<span class="ident">ValueNs</span>::<span class="ident">Const</span>(<span class="ident">konst</span>))
+                    } <span class="kw">else</span> {
+                        <span class="prelude-val">None</span>
+                    }
+                }
+                <span class="kw">crate</span>::<span class="ident">ImplItem</span>::<span class="ident">TypeAlias</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
+            };
+            <span class="kw">match</span> <span class="ident">matching_def</span> {
+                <span class="prelude-val">Some</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> {
+                    <span class="self">self</span>.<span class="ident">write_assoc_resolution</span>(<span class="ident">id</span>, <span class="ident">item</span>);
+                    <span class="ident">matching_def</span>
+                }
+                <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
             }
-            <span class="ident">AssocItem</span>::<span class="ident">TypeAlias</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
         })<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">def</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">item</span> {
-            <span class="ident">AssocItem</span>::<span class="ident">Function</span>(<span class="ident">f</span>) <span class="op">=&gt;</span> <span class="ident">ValueNs</span>::<span class="ident">Function</span>(<span class="ident">f</span>),
-            <span class="ident">AssocItem</span>::<span class="ident">Const</span>(<span class="ident">c</span>) <span class="op">=&gt;</span> <span class="ident">ValueNs</span>::<span class="ident">Const</span>(<span class="ident">c</span>),
-            <span class="ident">AssocItem</span>::<span class="ident">TypeAlias</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
-        };
-        <span class="kw">let</span> <span class="ident">substs</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">find_self_types</span>(<span class="kw-2">&amp;</span><span class="ident">def</span>, <span class="ident">ty</span>);
-
-        <span class="self">self</span>.<span class="ident">write_assoc_resolution</span>(<span class="ident">id</span>, <span class="ident">item</span>);
-        <span class="prelude-val">Some</span>((<span class="ident">def</span>, <span class="ident">substs</span>))
+        <span class="kw">let</span> <span class="ident">self_types</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">find_self_types</span>(<span class="kw-2">&amp;</span><span class="ident">def</span>, <span class="ident">ty</span>);
+        <span class="prelude-val">Some</span>((<span class="ident">def</span>, <span class="ident">self_types</span>))
     }
 
     <span class="kw">fn</span> <span class="ident">find_self_types</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">def</span>: <span class="kw-2">&amp;</span><span class="ident">ValueNs</span>, <span class="ident">actual_def_ty</span>: <span class="ident">Ty</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Substs</span><span class="op">&gt;</span> {

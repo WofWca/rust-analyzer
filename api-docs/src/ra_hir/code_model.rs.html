@@ -1019,22 +1019,6 @@
 <span id="1019">1019</span>
 <span id="1020">1020</span>
 <span id="1021">1021</span>
-<span id="1022">1022</span>
-<span id="1023">1023</span>
-<span id="1024">1024</span>
-<span id="1025">1025</span>
-<span id="1026">1026</span>
-<span id="1027">1027</span>
-<span id="1028">1028</span>
-<span id="1029">1029</span>
-<span id="1030">1030</span>
-<span id="1031">1031</span>
-<span id="1032">1032</span>
-<span id="1033">1033</span>
-<span id="1034">1034</span>
-<span id="1035">1035</span>
-<span id="1036">1036</span>
-<span id="1037">1037</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod</span> <span class="ident">src</span>;
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod</span> <span class="ident">docs</span>;
@@ -1061,7 +1045,7 @@
     },
     <span class="ident">nameres</span>::{<span class="ident">CrateModuleId</span>, <span class="ident">ImportId</span>, <span class="ident">ModuleScope</span>, <span class="ident">Namespace</span>},
     <span class="ident">resolve</span>::{<span class="ident">Resolver</span>, <span class="ident">TypeNs</span>},
-    <span class="ident">traits</span>::<span class="ident">TraitData</span>,
+    <span class="ident">traits</span>::{<span class="ident">TraitData</span>, <span class="ident">TraitItem</span>},
     <span class="ident">ty</span>::{
         <span class="ident">primitive</span>::{<span class="ident">FloatBitness</span>, <span class="ident">FloatTy</span>, <span class="ident">IntBitness</span>, <span class="ident">IntTy</span>, <span class="ident">Signedness</span>},
         <span class="ident">InferenceResult</span>, <span class="ident">TraitRef</span>,
@@ -1307,7 +1291,7 @@
 
         <span class="kw">for</span> <span class="ident">impl_block</span> <span class="kw">in</span> <span class="self">self</span>.<span class="ident">impl_blocks</span>(<span class="ident">db</span>) {
             <span class="kw">for</span> <span class="ident">item</span> <span class="kw">in</span> <span class="ident">impl_block</span>.<span class="ident">items</span>(<span class="ident">db</span>) {
-                <span class="kw">if</span> <span class="kw">let</span> <span class="ident">AssocItem</span>::<span class="ident">Function</span>(<span class="ident">f</span>) <span class="op">=</span> <span class="ident">item</span> {
+                <span class="kw">if</span> <span class="kw">let</span> <span class="kw">crate</span>::<span class="ident">ImplItem</span>::<span class="ident">Method</span>(<span class="ident">f</span>) <span class="op">=</span> <span class="ident">item</span> {
                     <span class="ident">f</span>.<span class="ident">diagnostics</span>(<span class="ident">db</span>, <span class="ident">sink</span>);
                 }
             }
@@ -1787,10 +1771,6 @@
         <span class="ident">db</span>.<span class="ident">const_data</span>(<span class="self">self</span>)
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">name</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">db</span>: <span class="kw-2">&amp;</span><span class="kw">impl</span> <span class="ident">HirDatabase</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Name</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">data</span>(<span class="ident">db</span>).<span class="ident">name</span>().<span class="ident">cloned</span>()
-    }
-
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">infer</span>(<span class="self">self</span>, <span class="ident">db</span>: <span class="kw-2">&amp;</span><span class="kw">impl</span> <span class="ident">HirDatabase</span>) <span class="op">-&gt;</span> <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">InferenceResult</span><span class="op">&gt;</span> {
         <span class="ident">db</span>.<span class="ident">infer</span>(<span class="self">self</span>.<span class="ident">into</span>())
     }
@@ -1891,7 +1871,7 @@
         <span class="self">self</span>.<span class="ident">trait_data</span>(<span class="ident">db</span>).<span class="ident">name</span>().<span class="ident">clone</span>()
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">items</span>(<span class="self">self</span>, <span class="ident">db</span>: <span class="kw-2">&amp;</span><span class="kw">impl</span> <span class="ident">DefDatabase</span>) <span class="op">-&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">AssocItem</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">items</span>(<span class="self">self</span>, <span class="ident">db</span>: <span class="kw-2">&amp;</span><span class="kw">impl</span> <span class="ident">DefDatabase</span>) <span class="op">-&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">TraitItem</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">trait_data</span>(<span class="ident">db</span>).<span class="ident">items</span>().<span class="ident">to_vec</span>()
     }
 
@@ -1944,7 +1924,7 @@
             .<span class="ident">items</span>()
             .<span class="ident">iter</span>()
             .<span class="ident">filter_map</span>(<span class="op">|</span><span class="ident">item</span><span class="op">|</span> <span class="kw">match</span> <span class="ident">item</span> {
-                <span class="ident">AssocItem</span>::<span class="ident">TypeAlias</span>(<span class="ident">t</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="kw-2">*</span><span class="ident">t</span>),
+                <span class="ident">TraitItem</span>::<span class="ident">TypeAlias</span>(<span class="ident">t</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="kw-2">*</span><span class="ident">t</span>),
                 <span class="kw">_</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
             })
             .<span class="ident">find</span>(<span class="op">|</span><span class="ident">t</span><span class="op">|</span> <span class="kw-2">&amp;</span><span class="ident">t</span>.<span class="ident">name</span>(<span class="ident">db</span>) <span class="op">==</span> <span class="ident">name</span>)
@@ -2061,17 +2041,5 @@
         }
     }
 }
-
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Copy</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Hash</span>)]</span>
-<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">AssocItem</span> {
-    <span class="ident">Function</span>(<span class="ident">Function</span>),
-    <span class="ident">Const</span>(<span class="ident">Const</span>),
-    <span class="ident">TypeAlias</span>(<span class="ident">TypeAlias</span>),
-}
-<span class="comment">// FIXME: not every function, ... is actually an assoc item. maybe we should make</span>
-<span class="comment">// sure that you can only turn actual assoc items into AssocItems. This would</span>
-<span class="comment">// require not implementing From, and instead having some checked way of</span>
-<span class="comment">// casting them, and somehow making the constructors private, which would be annoying.</span>
-<span class="macro">impl_froms</span><span class="macro">!</span>(<span class="ident">AssocItem</span>: <span class="ident">Function</span>, <span class="ident">Const</span>, <span class="ident">TypeAlias</span>);
 </pre></div>
 </section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g., <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g., <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g., <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../";window.currentCrate = "ra_hir";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>
