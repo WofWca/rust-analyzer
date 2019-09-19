@@ -89,6 +89,9 @@
 <span id="89">89</span>
 <span id="90">90</span>
 <span id="91">91</span>
+<span id="92">92</span>
+<span id="93">93</span>
+<span id="94">94</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="attribute">#![<span class="ident">recursion_limit</span> <span class="op">=</span> <span class="string">&quot;512&quot;</span>]</span>
 
@@ -145,6 +148,8 @@
 
 <span class="kw">mod</span> <span class="ident">code_model</span>;
 
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">from_source</span>;
+
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">marks</span>;
 
@@ -159,6 +164,7 @@
     <span class="ident">adt</span>::<span class="ident">VariantDef</span>,
     <span class="ident">either</span>::<span class="ident">Either</span>,
     <span class="ident">expr</span>::<span class="ident">ExprScopes</span>,
+    <span class="ident">from_source</span>::<span class="ident">FromSource</span>,
     <span class="ident">generics</span>::{<span class="ident">GenericParam</span>, <span class="ident">GenericParams</span>, <span class="ident">HasGenericParams</span>},
     <span class="ident">ids</span>::{<span class="ident">HirFileId</span>, <span class="ident">MacroCallId</span>, <span class="ident">MacroCallLoc</span>, <span class="ident">MacroDefId</span>, <span class="ident">MacroFile</span>},
     <span class="ident">impl_block</span>::<span class="ident">ImplBlock</span>,

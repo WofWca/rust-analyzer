@@ -1351,7 +1351,7 @@
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="ident">id</span>: <span class="ident">StructFieldId</span>,
 }
 
-<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>)]</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">FieldSource</span> {
     <span class="ident">Named</span>(<span class="ident">ast</span>::<span class="ident">RecordFieldDef</span>),
     <span class="ident">Pos</span>(<span class="ident">ast</span>::<span class="ident">TupleFieldDef</span>),
