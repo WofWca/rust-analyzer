@@ -332,6 +332,11 @@
 <span id="332">332</span>
 <span id="333">333</span>
 <span id="334">334</span>
+<span id="335">335</span>
+<span id="336">336</span>
+<span id="337">337</span>
+<span id="338">338</span>
+<span id="339">339</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! `ra_assists` crate provides a bunch of code assists, also known as code</span>
 <span class="doccomment">//! actions (in LSP) or intentions (in IntelliJ).</span>
@@ -431,6 +436,7 @@
 <span class="kw">mod</span> <span class="ident">merge_match_arms</span>;
 <span class="kw">mod</span> <span class="ident">introduce_variable</span>;
 <span class="kw">mod</span> <span class="ident">inline_local_variable</span>;
+<span class="kw">mod</span> <span class="ident">raw_string</span>;
 <span class="kw">mod</span> <span class="ident">replace_if_let_with_match</span>;
 <span class="kw">mod</span> <span class="ident">split_import</span>;
 <span class="kw">mod</span> <span class="ident">remove_dbg</span>;
@@ -460,6 +466,10 @@
         <span class="ident">move_guard</span>::<span class="ident">move_guard_to_arm_body</span>,
         <span class="ident">move_guard</span>::<span class="ident">move_arm_cond_to_match_guard</span>,
         <span class="ident">move_bounds</span>::<span class="ident">move_bounds_to_where_clause</span>,
+        <span class="ident">raw_string</span>::<span class="ident">add_hash</span>,
+        <span class="ident">raw_string</span>::<span class="ident">make_raw_string</span>,
+        <span class="ident">raw_string</span>::<span class="ident">make_usual_string</span>,
+        <span class="ident">raw_string</span>::<span class="ident">remove_hash</span>,
     ]
 }
 
