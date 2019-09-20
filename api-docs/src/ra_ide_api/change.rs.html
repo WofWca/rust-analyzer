@@ -344,6 +344,20 @@
 <span id="344">344</span>
 <span id="345">345</span>
 <span id="346">346</span>
+<span id="347">347</span>
+<span id="348">348</span>
+<span id="349">349</span>
+<span id="350">350</span>
+<span id="351">351</span>
+<span id="352">352</span>
+<span id="353">353</span>
+<span id="354">354</span>
+<span id="355">355</span>
+<span id="356">356</span>
+<span id="357">357</span>
+<span id="358">358</span>
+<span id="359">359</span>
+<span id="360">360</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">fmt</span>, <span class="ident">sync</span>::<span class="ident">Arc</span>, <span class="ident">time</span>};
 
@@ -353,6 +367,7 @@
 };
 <span class="kw">use</span> <span class="ident">ra_prof</span>::{<span class="ident">memory_usage</span>, <span class="ident">profile</span>, <span class="ident">Bytes</span>};
 <span class="kw">use</span> <span class="ident">ra_syntax</span>::<span class="ident">SourceFile</span>;
+<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;wasm&quot;</span>))]</span>
 <span class="kw">use</span> <span class="ident">rayon</span>::<span class="ident">prelude</span>::<span class="kw-2">*</span>;
 <span class="kw">use</span> <span class="ident">relative_path</span>::<span class="ident">RelativePathBuf</span>;
 <span class="kw">use</span> <span class="ident">rustc_hash</span>::<span class="ident">FxHashMap</span>;
@@ -490,7 +505,12 @@
         <span class="ident">root_id</span>: <span class="ident">SourceRootId</span>,
         <span class="ident">files</span>: <span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">FileId</span>, <span class="ident">RelativePathBuf</span>, <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>)<span class="op">&gt;</span>,
     ) <span class="op">-&gt;</span> <span class="ident">LibraryData</span> {
-        <span class="kw">let</span> <span class="ident">symbol_index</span> <span class="op">=</span> <span class="ident">SymbolIndex</span>::<span class="ident">for_files</span>(<span class="ident">files</span>.<span class="ident">par_iter</span>().<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">file_id</span>, <span class="kw">_</span>, <span class="ident">text</span>)<span class="op">|</span> {
+        <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;wasm&quot;</span>))]</span>
+        <span class="kw">let</span> <span class="ident">iter</span> <span class="op">=</span> <span class="ident">files</span>.<span class="ident">par_iter</span>();
+        <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;wasm&quot;</span>)]</span>
+        <span class="kw">let</span> <span class="ident">iter</span> <span class="op">=</span> <span class="ident">files</span>.<span class="ident">iter</span>();
+
+        <span class="kw">let</span> <span class="ident">symbol_index</span> <span class="op">=</span> <span class="ident">SymbolIndex</span>::<span class="ident">for_files</span>(<span class="ident">iter</span>.<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">file_id</span>, <span class="kw">_</span>, <span class="ident">text</span>)<span class="op">|</span> {
             <span class="kw">let</span> <span class="ident">parse</span> <span class="op">=</span> <span class="ident">SourceFile</span>::<span class="ident">parse</span>(<span class="ident">text</span>);
             (<span class="kw-2">*</span><span class="ident">file_id</span>, <span class="ident">parse</span>)
         }));
@@ -581,8 +601,12 @@
     }
 
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">maybe_collect_garbage</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+        <span class="kw">if</span> <span class="macro">cfg</span><span class="macro">!</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;wasm&quot;</span>) {
+            <span class="kw">return</span>;
+        }
+
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">last_gc_check</span>.<span class="ident">elapsed</span>() <span class="op">&gt;</span> <span class="ident">GC_COOLDOWN</span> {
-            <span class="self">self</span>.<span class="ident">last_gc_check</span> <span class="op">=</span> <span class="ident">time</span>::<span class="ident">Instant</span>::<span class="ident">now</span>();
+            <span class="self">self</span>.<span class="ident">last_gc_check</span> <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">wasm_shims</span>::<span class="ident">Instant</span>::<span class="ident">now</span>();
             <span class="kw">let</span> <span class="ident">retained_trees</span> <span class="op">=</span> <span class="ident">syntax_tree_stats</span>(<span class="self">self</span>).<span class="ident">retained</span>;
             <span class="kw">if</span> <span class="ident">retained_trees</span> <span class="op">&gt;</span> <span class="number">100</span> {
                 <span class="ident">log</span>::<span class="macro">info</span><span class="macro">!</span>(<span class="string">&quot;automatic garbadge collection, {} retained trees&quot;</span>, <span class="ident">retained_trees</span>);
@@ -592,8 +616,12 @@
     }
 
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">collect_garbage</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+        <span class="kw">if</span> <span class="macro">cfg</span><span class="macro">!</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;wasm&quot;</span>) {
+            <span class="kw">return</span>;
+        }
+
         <span class="kw">let</span> <span class="ident">_p</span> <span class="op">=</span> <span class="ident">profile</span>(<span class="string">&quot;RootDatabase::collect_garbage&quot;</span>);
-        <span class="self">self</span>.<span class="ident">last_gc</span> <span class="op">=</span> <span class="ident">time</span>::<span class="ident">Instant</span>::<span class="ident">now</span>();
+        <span class="self">self</span>.<span class="ident">last_gc</span> <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">wasm_shims</span>::<span class="ident">Instant</span>::<span class="ident">now</span>();
 
         <span class="kw">let</span> <span class="ident">sweep</span> <span class="op">=</span> <span class="ident">SweepStrategy</span>::<span class="ident">default</span>().<span class="ident">discard_values</span>().<span class="ident">sweep_all_revisions</span>();
 
