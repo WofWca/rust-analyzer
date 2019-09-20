@@ -184,6 +184,7 @@
 <span id="184">184</span>
 <span id="185">185</span>
 <span id="186">186</span>
+<span id="187">187</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! This module resolves `mod foo;` declaration to file.</span>
 
@@ -210,6 +211,7 @@
 <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn</span> <span class="ident">resolve_submodule</span>(
     <span class="ident">db</span>: <span class="kw-2">&amp;</span><span class="kw">impl</span> <span class="ident">DefDatabase</span>,
     <span class="ident">file_id</span>: <span class="ident">HirFileId</span>,
+    <span class="ident">mod_attr_path</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">SmolStr</span><span class="op">&gt;</span>,
     <span class="ident">name</span>: <span class="kw-2">&amp;</span><span class="ident">Name</span>,
     <span class="ident">is_root</span>: <span class="ident">bool</span>,
     <span class="ident">attr_path</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">SmolStr</span><span class="op">&gt;</span>,
@@ -267,7 +269,7 @@
             <span class="ident">ResolutionMode</span>::<span class="ident">OutOfLine</span>(<span class="ident">OutOfLineMode</span>::<span class="ident">WithAttributePath</span>(<span class="ident">path</span>))
         }
         (<span class="prelude-val">None</span>, <span class="prelude-val">None</span>) <span class="op">=&gt;</span> {
-            <span class="kw">let</span> <span class="ident">is_dir_owner</span> <span class="op">=</span> <span class="ident">is_root</span> <span class="op">||</span> <span class="ident">mod_name</span> <span class="op">==</span> <span class="string">&quot;mod&quot;</span>;
+            <span class="kw">let</span> <span class="ident">is_dir_owner</span> <span class="op">=</span> <span class="ident">is_root</span> <span class="op">||</span> <span class="ident">mod_name</span> <span class="op">==</span> <span class="string">&quot;mod&quot;</span> <span class="op">||</span> <span class="ident">mod_attr_path</span>.<span class="ident">is_some</span>();
             <span class="kw">if</span> <span class="ident">is_dir_owner</span> {
                 <span class="kw">let</span> <span class="ident">file_mod</span> <span class="op">=</span> <span class="ident">dir_path</span>.<span class="ident">join</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}.rs&quot;</span>, <span class="ident">name</span>));
                 <span class="kw">let</span> <span class="ident">dir_mod</span> <span class="op">=</span> <span class="ident">dir_path</span>.<span class="ident">join</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}/mod.rs&quot;</span>, <span class="ident">name</span>));
