@@ -322,6 +322,16 @@
 <span id="322">322</span>
 <span id="323">323</span>
 <span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
+<span id="327">327</span>
+<span id="328">328</span>
+<span id="329">329</span>
+<span id="330">330</span>
+<span id="331">331</span>
+<span id="332">332</span>
+<span id="333">333</span>
+<span id="334">334</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
@@ -493,6 +503,7 @@
             <span class="macro">T</span><span class="macro">!</span>[.] <span class="kw">if</span> <span class="ident">p</span>.<span class="ident">at</span>(<span class="macro">T</span><span class="macro">!</span>[..]) <span class="op">=&gt;</span> <span class="ident">p</span>.<span class="ident">bump</span>(<span class="macro">T</span><span class="macro">!</span>[..]),
 
             <span class="ident">IDENT</span> <span class="kw">if</span> <span class="ident">p</span>.<span class="ident">nth</span>(<span class="number">1</span>) <span class="op">==</span> <span class="macro">T</span><span class="macro">!</span>[:] <span class="op">=&gt;</span> <span class="ident">record_field_pat</span>(<span class="ident">p</span>),
+            <span class="ident">INT_NUMBER</span> <span class="kw">if</span> <span class="ident">p</span>.<span class="ident">nth</span>(<span class="number">1</span>) <span class="op">==</span> <span class="macro">T</span><span class="macro">!</span>[:] <span class="op">=&gt;</span> <span class="ident">record_field_pat</span>(<span class="ident">p</span>),
             <span class="macro">T</span><span class="macro">!</span>[<span class="string">&#39;{&#39;</span>] <span class="op">=&gt;</span> <span class="ident">error_block</span>(<span class="ident">p</span>, <span class="string">&quot;expected ident&quot;</span>),
             <span class="macro">T</span><span class="macro">!</span>[<span class="kw">box</span>] <span class="op">=&gt;</span> {
                 <span class="ident">box_pat</span>(<span class="ident">p</span>);
@@ -509,12 +520,21 @@
     <span class="ident">m</span>.<span class="ident">complete</span>(<span class="ident">p</span>, <span class="ident">RECORD_FIELD_PAT_LIST</span>);
 }
 
+<span class="comment">// test record_field_pat</span>
+<span class="comment">// fn foo() {</span>
+<span class="comment">//     let S { 0: 1 } = ();</span>
+<span class="comment">//     let S { x: 1 } = ();</span>
+<span class="comment">// }</span>
 <span class="kw">fn</span> <span class="ident">record_field_pat</span>(<span class="ident">p</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Parser</span>) {
-    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">p</span>.<span class="ident">at</span>(<span class="ident">IDENT</span>));
+    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">p</span>.<span class="ident">at</span>(<span class="ident">IDENT</span>) <span class="op">||</span> <span class="ident">p</span>.<span class="ident">at</span>(<span class="ident">INT_NUMBER</span>));
     <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">p</span>.<span class="ident">nth</span>(<span class="number">1</span>) <span class="op">==</span> <span class="macro">T</span><span class="macro">!</span>[:]);
 
     <span class="kw">let</span> <span class="ident">m</span> <span class="op">=</span> <span class="ident">p</span>.<span class="ident">start</span>();
-    <span class="ident">name</span>(<span class="ident">p</span>);
+
+    <span class="kw">if</span> <span class="op">!</span><span class="ident">p</span>.<span class="ident">eat</span>(<span class="ident">INT_NUMBER</span>) {
+        <span class="ident">name</span>(<span class="ident">p</span>)
+    }
+
     <span class="ident">p</span>.<span class="ident">bump_any</span>();
     <span class="ident">pattern</span>(<span class="ident">p</span>);
     <span class="ident">m</span>.<span class="ident">complete</span>(<span class="ident">p</span>, <span class="ident">RECORD_FIELD_PAT</span>);
