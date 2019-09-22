@@ -184,7 +184,6 @@
 <span id="184">184</span>
 <span id="185">185</span>
 <span id="186">186</span>
-<span id="187">187</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Parser recognizes special macro syntax, `$var` and `$(repeat)*`, in token</span>
 <span class="doccomment">//! trees.</span>
@@ -330,7 +329,6 @@
     }
 }
 
-<span class="doccomment">///TOOD: impl for slice iter</span>
 <span class="kw">fn</span> <span class="ident">parse_repeat</span>(<span class="ident">src</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">TtIter</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Separator</span><span class="op">&gt;</span>, <span class="ident">RepeatKind</span>), <span class="ident">ExpandError</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">separator</span> <span class="op">=</span> <span class="ident">Separator</span>::<span class="ident">Puncts</span>(<span class="ident">SmallVec</span>::<span class="ident">new</span>());
     <span class="kw">for</span> <span class="ident">tt</span> <span class="kw">in</span> <span class="ident">src</span> {

@@ -114,6 +114,13 @@
 <span id="114">114</span>
 <span id="115">115</span>
 <span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">/// `mbe` (short for Macro By Example) crate contains code for handling</span>
 <span class="doccomment">/// `macro_rules` macros. It uses `TokenTree` (from `ra_tt` package) as the</span>
@@ -169,6 +176,9 @@
 
 <span class="kw">impl</span> <span class="ident">MacroRules</span> {
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">parse</span>(<span class="ident">tt</span>: <span class="kw-2">&amp;</span><span class="ident">tt</span>::<span class="ident">Subtree</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">MacroRules</span>, <span class="ident">ParseError</span><span class="op">&gt;</span> {
+        <span class="comment">// Note: this parsing can be implemented using mbe machinery itself, by</span>
+        <span class="comment">// matching against `$($lhs:tt =&gt; $rhs:tt);*` pattern, but implementing</span>
+        <span class="comment">// manually seems easier.</span>
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">src</span> <span class="op">=</span> <span class="ident">TtIter</span>::<span class="ident">new</span>(<span class="ident">tt</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">rules</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
         <span class="kw">while</span> <span class="ident">src</span>.<span class="ident">len</span>() <span class="op">&gt;</span> <span class="number">0</span> {
@@ -181,6 +191,11 @@
                 <span class="kw">break</span>;
             }
         }
+
+        <span class="kw">for</span> <span class="ident">rule</span> <span class="kw">in</span> <span class="ident">rules</span>.<span class="ident">iter</span>() {
+            <span class="ident">validate</span>(<span class="kw-2">&amp;</span><span class="ident">rule</span>.<span class="ident">lhs</span>)<span class="question-mark">?</span>;
+        }
+
         <span class="prelude-val">Ok</span>(<span class="ident">MacroRules</span> { <span class="ident">rules</span> })
     }
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">expand</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">tt</span>: <span class="kw-2">&amp;</span><span class="ident">tt</span>::<span class="ident">Subtree</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">tt</span>::<span class="ident">Subtree</span>, <span class="ident">ExpandError</span><span class="op">&gt;</span> {
@@ -194,7 +209,6 @@
             .<span class="ident">expect_subtree</span>()
             .<span class="ident">map_err</span>(<span class="op">|</span>()<span class="op">|</span> <span class="ident">ParseError</span>::<span class="ident">Expected</span>(<span class="string">&quot;expected subtree&quot;</span>.<span class="ident">to_string</span>()))<span class="question-mark">?</span>
             .<span class="ident">clone</span>();
-        <span class="ident">validate</span>(<span class="kw-2">&amp;</span><span class="ident">lhs</span>)<span class="question-mark">?</span>;
         <span class="ident">lhs</span>.<span class="ident">delimiter</span> <span class="op">=</span> <span class="ident">tt</span>::<span class="ident">Delimiter</span>::<span class="prelude-val">None</span>;
         <span class="ident">src</span>.<span class="ident">expect_char</span>(<span class="string">&#39;=&#39;</span>).<span class="ident">map_err</span>(<span class="op">|</span>()<span class="op">|</span> <span class="ident">ParseError</span>::<span class="ident">Expected</span>(<span class="string">&quot;expected `=`&quot;</span>.<span class="ident">to_string</span>()))<span class="question-mark">?</span>;
         <span class="ident">src</span>.<span class="ident">expect_char</span>(<span class="string">&#39;&gt;&#39;</span>).<span class="ident">map_err</span>(<span class="op">|</span>()<span class="op">|</span> <span class="ident">ParseError</span>::<span class="ident">Expected</span>(<span class="string">&quot;expected `&gt;`&quot;</span>.<span class="ident">to_string</span>()))<span class="question-mark">?</span>;
