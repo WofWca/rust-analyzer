@@ -225,6 +225,13 @@
 <span id="225">225</span>
 <span id="226">226</span>
 <span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>;
 
@@ -391,6 +398,13 @@
 
     <span class="attribute">#[<span class="ident">salsa</span>::<span class="ident">invoke</span>(<span class="kw">crate</span>::<span class="ident">ty</span>::<span class="ident">callable_item_sig</span>)]</span>
     <span class="kw">fn</span> <span class="ident">callable_item_signature</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">def</span>: <span class="ident">CallableDef</span>) <span class="op">-&gt;</span> <span class="ident">FnSig</span>;
+
+    <span class="attribute">#[<span class="ident">salsa</span>::<span class="ident">invoke</span>(<span class="kw">crate</span>::<span class="ident">ty</span>::<span class="ident">generic_predicates_for_param_query</span>)]</span>
+    <span class="kw">fn</span> <span class="ident">generic_predicates_for_param</span>(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        <span class="ident">def</span>: <span class="ident">GenericDef</span>,
+        <span class="ident">param_idx</span>: <span class="ident">u32</span>,
+    ) <span class="op">-&gt;</span> <span class="ident">Arc</span><span class="op">&lt;</span>[<span class="ident">GenericPredicate</span>]<span class="op">&gt;</span>;
 
     <span class="attribute">#[<span class="ident">salsa</span>::<span class="ident">invoke</span>(<span class="kw">crate</span>::<span class="ident">ty</span>::<span class="ident">generic_predicates_query</span>)]</span>
     <span class="kw">fn</span> <span class="ident">generic_predicates</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">def</span>: <span class="ident">GenericDef</span>) <span class="op">-&gt;</span> <span class="ident">Arc</span><span class="op">&lt;</span>[<span class="ident">GenericPredicate</span>]<span class="op">&gt;</span>;

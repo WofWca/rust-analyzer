@@ -702,6 +702,10 @@
 <span id="702">702</span>
 <span id="703">703</span>
 <span id="704">704</span>
+<span id="705">705</span>
+<span id="706">706</span>
+<span id="707">707</span>
+<span id="708">708</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Conversion code from/to Chalk.</span>
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>;
@@ -809,7 +813,11 @@
                     }
                 }
             }
-            <span class="ident">chalk_ir</span>::<span class="ident">Ty</span>::<span class="ident">Projection</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="macro">unimplemented</span><span class="macro">!</span>(),
+            <span class="ident">chalk_ir</span>::<span class="ident">Ty</span>::<span class="ident">Projection</span>(<span class="ident">proj</span>) <span class="op">=&gt;</span> {
+                <span class="kw">let</span> <span class="ident">associated_ty</span> <span class="op">=</span> <span class="ident">from_chalk</span>(<span class="ident">db</span>, <span class="ident">proj</span>.<span class="ident">associated_ty_id</span>);
+                <span class="kw">let</span> <span class="ident">parameters</span> <span class="op">=</span> <span class="ident">from_chalk</span>(<span class="ident">db</span>, <span class="ident">proj</span>.<span class="ident">parameters</span>);
+                <span class="ident">Ty</span>::<span class="ident">Projection</span>(<span class="ident">ProjectionTy</span> { <span class="ident">associated_ty</span>, <span class="ident">parameters</span> })
+            }
             <span class="ident">chalk_ir</span>::<span class="ident">Ty</span>::<span class="ident">ForAll</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="macro">unimplemented</span><span class="macro">!</span>(),
             <span class="ident">chalk_ir</span>::<span class="ident">Ty</span>::<span class="ident">BoundVar</span>(<span class="ident">idx</span>) <span class="op">=&gt;</span> <span class="ident">Ty</span>::<span class="ident">Bound</span>(<span class="ident">idx</span> <span class="kw">as</span> <span class="ident">u32</span>),
             <span class="ident">chalk_ir</span>::<span class="ident">Ty</span>::<span class="ident">InferenceVar</span>(<span class="ident">_iv</span>) <span class="op">=&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;unexpected chalk infer ty&quot;</span>),
