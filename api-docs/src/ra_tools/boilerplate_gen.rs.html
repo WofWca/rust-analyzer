@@ -344,14 +344,6 @@
 <span id="344">344</span>
 <span id="345">345</span>
 <span id="346">346</span>
-<span id="347">347</span>
-<span id="348">348</span>
-<span id="349">349</span>
-<span id="350">350</span>
-<span id="351">351</span>
-<span id="352">352</span>
-<span id="353">353</span>
-<span id="354">354</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::{
     <span class="ident">collections</span>::<span class="ident">BTreeMap</span>,
@@ -515,31 +507,24 @@
 }
 
 <span class="kw">fn</span> <span class="ident">generate_syntax_kinds</span>(<span class="ident">grammar</span>: <span class="kw-2">&amp;</span><span class="ident">Grammar</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="ident">single_byte_tokens_values</span> <span class="op">=</span>
-        <span class="ident">grammar</span>.<span class="ident">single_byte_tokens</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">token</span>, <span class="ident">_name</span>)<span class="op">|</span> <span class="ident">token</span>.<span class="ident">chars</span>().<span class="ident">next</span>().<span class="ident">unwrap</span>());
-    <span class="kw">let</span> <span class="ident">single_byte_tokens</span> <span class="op">=</span> <span class="ident">grammar</span>
-        .<span class="ident">single_byte_tokens</span>
+    <span class="kw">let</span> (<span class="ident">single_byte_tokens_values</span>, <span class="ident">single_byte_tokens</span>): (<span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span>, <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;</span>) <span class="op">=</span> <span class="ident">grammar</span>
+        .<span class="ident">punct</span>
         .<span class="ident">iter</span>()
-        .<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">_token</span>, <span class="ident">name</span>)<span class="op">|</span> <span class="macro">format_ident</span><span class="macro">!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">name</span>))
-        .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;&gt;</span>();
+        .<span class="ident">filter</span>(<span class="op">|</span>(<span class="ident">token</span>, <span class="ident">_name</span>)<span class="op">|</span> <span class="ident">token</span>.<span class="ident">len</span>() <span class="op">==</span> <span class="number">1</span>)
+        .<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">token</span>, <span class="ident">name</span>)<span class="op">|</span> (<span class="ident">token</span>.<span class="ident">chars</span>().<span class="ident">next</span>().<span class="ident">unwrap</span>(), <span class="macro">format_ident</span><span class="macro">!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">name</span>)))
+        .<span class="ident">unzip</span>();
 
-    <span class="kw">let</span> <span class="ident">punctuation_values</span> <span class="op">=</span>
-        <span class="ident">grammar</span>.<span class="ident">single_byte_tokens</span>.<span class="ident">iter</span>().<span class="ident">chain</span>(<span class="ident">grammar</span>.<span class="ident">multi_byte_tokens</span>.<span class="ident">iter</span>()).<span class="ident">map</span>(
-            <span class="op">|</span>(<span class="ident">token</span>, <span class="ident">_name</span>)<span class="op">|</span> {
-                <span class="kw">if</span> <span class="string">&quot;{}[]()&quot;</span>.<span class="ident">contains</span>(<span class="ident">token</span>) {
-                    <span class="kw">let</span> <span class="ident">c</span> <span class="op">=</span> <span class="ident">token</span>.<span class="ident">chars</span>().<span class="ident">next</span>().<span class="ident">unwrap</span>();
-                    <span class="macro">quote</span><span class="macro">!</span> { #<span class="ident">c</span> }
-                } <span class="kw">else</span> {
-                    <span class="kw">let</span> <span class="ident">cs</span> <span class="op">=</span> <span class="ident">token</span>.<span class="ident">chars</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> <span class="ident">Punct</span>::<span class="ident">new</span>(<span class="ident">c</span>, <span class="ident">Spacing</span>::<span class="ident">Joint</span>));
-                    <span class="macro">quote</span><span class="macro">!</span> { #(#<span class="ident">cs</span>)<span class="op">*</span> }
-                }
-            },
-        );
-    <span class="kw">let</span> <span class="ident">punctuation</span> <span class="op">=</span> <span class="ident">single_byte_tokens</span>
-        .<span class="ident">clone</span>()
-        .<span class="ident">into_iter</span>()
-        .<span class="ident">chain</span>(<span class="ident">grammar</span>.<span class="ident">multi_byte_tokens</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">_token</span>, <span class="ident">name</span>)<span class="op">|</span> <span class="macro">format_ident</span><span class="macro">!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">name</span>)))
-        .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;&gt;</span>();
+    <span class="kw">let</span> <span class="ident">punctuation_values</span> <span class="op">=</span> <span class="ident">grammar</span>.<span class="ident">punct</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">token</span>, <span class="ident">_name</span>)<span class="op">|</span> {
+        <span class="kw">if</span> <span class="string">&quot;{}[]()&quot;</span>.<span class="ident">contains</span>(<span class="ident">token</span>) {
+            <span class="kw">let</span> <span class="ident">c</span> <span class="op">=</span> <span class="ident">token</span>.<span class="ident">chars</span>().<span class="ident">next</span>().<span class="ident">unwrap</span>();
+            <span class="macro">quote</span><span class="macro">!</span> { #<span class="ident">c</span> }
+        } <span class="kw">else</span> {
+            <span class="kw">let</span> <span class="ident">cs</span> <span class="op">=</span> <span class="ident">token</span>.<span class="ident">chars</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">c</span><span class="op">|</span> <span class="ident">Punct</span>::<span class="ident">new</span>(<span class="ident">c</span>, <span class="ident">Spacing</span>::<span class="ident">Joint</span>));
+            <span class="macro">quote</span><span class="macro">!</span> { #(#<span class="ident">cs</span>)<span class="op">*</span> }
+        }
+    });
+    <span class="kw">let</span> <span class="ident">punctuation</span> <span class="op">=</span>
+        <span class="ident">grammar</span>.<span class="ident">punct</span>.<span class="ident">iter</span>().<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">_token</span>, <span class="ident">name</span>)<span class="op">|</span> <span class="macro">format_ident</span><span class="macro">!</span>(<span class="string">&quot;{}&quot;</span>, <span class="ident">name</span>)).<span class="ident">collect</span>::<span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="kw">_</span><span class="op">&gt;&gt;</span>();
 
     <span class="kw">let</span> <span class="ident">full_keywords_values</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">grammar</span>.<span class="ident">keywords</span>;
     <span class="kw">let</span> <span class="ident">full_keywords</span> <span class="op">=</span>
@@ -649,8 +634,7 @@
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Deserialize</span>, <span class="ident">Debug</span>)]</span>
 <span class="kw">struct</span> <span class="ident">Grammar</span> {
-    <span class="ident">single_byte_tokens</span>: <span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">String</span>, <span class="ident">String</span>)<span class="op">&gt;</span>,
-    <span class="ident">multi_byte_tokens</span>: <span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">String</span>, <span class="ident">String</span>)<span class="op">&gt;</span>,
+    <span class="ident">punct</span>: <span class="ident">Vec</span><span class="op">&lt;</span>(<span class="ident">String</span>, <span class="ident">String</span>)<span class="op">&gt;</span>,
     <span class="ident">keywords</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="ident">contextual_keywords</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
     <span class="ident">literals</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>,
