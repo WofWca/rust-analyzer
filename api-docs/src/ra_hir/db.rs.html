@@ -248,8 +248,8 @@
     <span class="ident">nameres</span>::{<span class="ident">CrateDefMap</span>, <span class="ident">ImportSourceMap</span>, <span class="ident">Namespace</span>, <span class="ident">RawItems</span>},
     <span class="ident">traits</span>::<span class="ident">TraitData</span>,
     <span class="ident">ty</span>::{
-        <span class="ident">method_resolution</span>::<span class="ident">CrateImplBlocks</span>, <span class="ident">CallableDef</span>, <span class="ident">FnSig</span>, <span class="ident">GenericPredicate</span>, <span class="ident">InferenceResult</span>,
-        <span class="ident">Substs</span>, <span class="ident">Ty</span>, <span class="ident">TypableDef</span>, <span class="ident">TypeCtor</span>,
+        <span class="ident">method_resolution</span>::<span class="ident">CrateImplBlocks</span>, <span class="ident">traits</span>::<span class="ident">Impl</span>, <span class="ident">CallableDef</span>, <span class="ident">FnSig</span>, <span class="ident">GenericPredicate</span>,
+        <span class="ident">InferenceResult</span>, <span class="ident">Substs</span>, <span class="ident">Ty</span>, <span class="ident">TypableDef</span>, <span class="ident">TypeCtor</span>,
     },
     <span class="ident">type_alias</span>::<span class="ident">TypeAliasData</span>,
     <span class="ident">AstIdMap</span>, <span class="ident">Const</span>, <span class="ident">ConstData</span>, <span class="ident">Crate</span>, <span class="ident">DefWithBody</span>, <span class="ident">Enum</span>, <span class="ident">ErasedFileAstId</span>, <span class="ident">ExprScopes</span>, <span class="ident">FnData</span>,
@@ -285,7 +285,7 @@
     <span class="attribute">#[<span class="ident">salsa</span>::<span class="ident">interned</span>]</span>
     <span class="kw">fn</span> <span class="ident">intern_type_ctor</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">type_ctor</span>: <span class="ident">TypeCtor</span>) <span class="op">-&gt;</span> <span class="ident">ids</span>::<span class="ident">TypeCtorId</span>;
     <span class="attribute">#[<span class="ident">salsa</span>::<span class="ident">interned</span>]</span>
-    <span class="kw">fn</span> <span class="ident">intern_impl_block</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">impl_block</span>: <span class="ident">ImplBlock</span>) <span class="op">-&gt;</span> <span class="ident">ids</span>::<span class="ident">GlobalImplId</span>;
+    <span class="kw">fn</span> <span class="ident">intern_impl</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">impl_</span>: <span class="ident">Impl</span>) <span class="op">-&gt;</span> <span class="ident">ids</span>::<span class="ident">GlobalImplId</span>;
 }
 
 <span class="doccomment">/// This database has access to source code, so queries here are not really</span>
