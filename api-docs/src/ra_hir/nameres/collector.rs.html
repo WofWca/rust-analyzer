@@ -975,7 +975,7 @@
         <span class="comment">// In Rust, `#[macro_export]` macros are unconditionally visible at the</span>
         <span class="comment">// crate root, even if the parent modules is **not** visible.</span>
         <span class="kw">if</span> <span class="ident">export</span> {
-            <span class="self">self</span>.<span class="ident">update</span>(<span class="self">self</span>.<span class="ident">def_map</span>.<span class="ident">root</span>, <span class="prelude-val">None</span>, <span class="kw-2">&amp;</span>[(<span class="ident">name</span>.<span class="ident">clone</span>(), <span class="ident">Resolution</span>::<span class="ident">from_macro</span>(<span class="ident">macro_</span>))]);
+            <span class="self">self</span>.<span class="ident">update</span>(<span class="self">self</span>.<span class="ident">def_map</span>.<span class="ident">root</span>, <span class="prelude-val">None</span>, <span class="kw-2">&amp;</span>[(<span class="ident">name</span>, <span class="ident">Resolution</span>::<span class="ident">from_macro</span>(<span class="ident">macro_</span>))]);
         }
     }
 

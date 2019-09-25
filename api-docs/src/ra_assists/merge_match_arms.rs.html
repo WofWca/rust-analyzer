@@ -197,7 +197,7 @@
     <span class="comment">// We check if the following match arm matches this one. We could, but don&#39;t,</span>
     <span class="comment">// compare to the previous match arm as well.</span>
     <span class="kw">let</span> <span class="ident">next</span> <span class="op">=</span> <span class="ident">current_arm</span>.<span class="ident">syntax</span>().<span class="ident">next_sibling</span>();
-    <span class="kw">let</span> <span class="ident">next_arm</span> <span class="op">=</span> <span class="ident">MatchArm</span>::<span class="ident">cast</span>(<span class="ident">next</span><span class="question-mark">?</span>.<span class="ident">clone</span>())<span class="question-mark">?</span>;
+    <span class="kw">let</span> <span class="ident">next_arm</span> <span class="op">=</span> <span class="ident">MatchArm</span>::<span class="ident">cast</span>(<span class="ident">next</span><span class="question-mark">?</span>)<span class="question-mark">?</span>;
 
     <span class="comment">// Don&#39;t try to handle arms with guards for now - can add support for this later</span>
     <span class="kw">if</span> <span class="ident">current_arm</span>.<span class="ident">guard</span>().<span class="ident">is_some</span>() <span class="op">||</span> <span class="ident">next_arm</span>.<span class="ident">guard</span>().<span class="ident">is_some</span>() {

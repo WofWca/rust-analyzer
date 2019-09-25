@@ -345,7 +345,7 @@
         <span class="comment">// actual completion.</span>
         <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span> {
             <span class="kw">let</span> <span class="ident">edit</span> <span class="op">=</span> <span class="ident">AtomTextEdit</span>::<span class="ident">insert</span>(<span class="ident">offset</span>, <span class="string">&quot;intellijRulezz&quot;</span>.<span class="ident">to_string</span>());
-            <span class="ident">original_parse</span>.<span class="ident">reparse</span>(<span class="kw-2">&amp;</span><span class="ident">edit</span>).<span class="ident">tree</span>().<span class="ident">to_owned</span>()
+            <span class="ident">original_parse</span>.<span class="ident">reparse</span>(<span class="kw-2">&amp;</span><span class="ident">edit</span>).<span class="ident">tree</span>()
         };
 
         <span class="comment">// First, let&#39;s try to complete a reference to some declaration.</span>
