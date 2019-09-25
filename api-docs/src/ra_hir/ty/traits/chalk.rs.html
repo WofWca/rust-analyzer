@@ -826,7 +826,6 @@
 <span id="826">826</span>
 <span id="827">827</span>
 <span id="828">828</span>
-<span id="829">829</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Conversion code from/to Chalk.</span>
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>;
@@ -1595,10 +1594,9 @@
 }
 
 <span class="kw">fn</span> <span class="ident">get_fn_trait</span>(<span class="ident">db</span>: <span class="kw-2">&amp;</span><span class="kw">impl</span> <span class="ident">HirDatabase</span>, <span class="ident">krate</span>: <span class="ident">Crate</span>, <span class="ident">fn_trait</span>: <span class="kw">super</span>::<span class="ident">FnTrait</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Trait</span><span class="op">&gt;</span> {
-    <span class="kw">let</span> <span class="ident">lang_items</span> <span class="op">=</span> <span class="ident">db</span>.<span class="ident">lang_items</span>(<span class="ident">krate</span>);
-    <span class="kw">let</span> <span class="ident">target</span> <span class="op">=</span> <span class="ident">lang_items</span>.<span class="ident">target</span>(<span class="ident">fn_trait</span>.<span class="ident">lang_item_name</span>())<span class="question-mark">?</span>;
+    <span class="kw">let</span> <span class="ident">target</span> <span class="op">=</span> <span class="ident">db</span>.<span class="ident">lang_item</span>(<span class="ident">krate</span>, <span class="ident">fn_trait</span>.<span class="ident">lang_item_name</span>().<span class="ident">into</span>())<span class="question-mark">?</span>;
     <span class="kw">match</span> <span class="ident">target</span> {
-        <span class="kw">crate</span>::<span class="ident">lang_item</span>::<span class="ident">LangItemTarget</span>::<span class="ident">Trait</span>(<span class="ident">t</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="kw-2">*</span><span class="ident">t</span>),
+        <span class="kw">crate</span>::<span class="ident">lang_item</span>::<span class="ident">LangItemTarget</span>::<span class="ident">Trait</span>(<span class="ident">t</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">t</span>),
         <span class="kw">_</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
     }
 }
