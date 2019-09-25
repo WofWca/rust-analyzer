@@ -1,7 +1,7 @@
 var N = null;var sourcesIndex = {};
 sourcesIndex["pre_commit"] = {"name":"","files":["pre-commit.rs"]};
 sourcesIndex["ra_arena"] = {"name":"","files":["lib.rs","map.rs"]};
-sourcesIndex["ra_assists"] = {"name":"","files":["add_derive.rs","add_explicit_type.rs","add_impl.rs","add_missing_impl_members.rs","assist_ctx.rs","ast_editor.rs","auto_import.rs","change_visibility.rs","fill_match_arms.rs","flip_binexpr.rs","flip_comma.rs","inline_local_variable.rs","introduce_variable.rs","lib.rs","marks.rs","merge_match_arms.rs","move_bounds.rs","move_guard.rs","raw_string.rs","remove_dbg.rs","replace_if_let_with_match.rs","split_import.rs"]};
+sourcesIndex["ra_assists"] = {"name":"","dirs":[{"name":"assists","files":["add_derive.rs","add_explicit_type.rs","add_impl.rs","add_missing_impl_members.rs","auto_import.rs","change_visibility.rs","fill_match_arms.rs","flip_binexpr.rs","flip_comma.rs","inline_local_variable.rs","introduce_variable.rs","merge_match_arms.rs","move_bounds.rs","move_guard.rs","raw_string.rs","remove_dbg.rs","replace_if_let_with_match.rs","split_import.rs"]}],"files":["assist_ctx.rs","ast_builder.rs","ast_editor.rs","lib.rs","marks.rs"]};
 sourcesIndex["ra_batch"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["ra_cli"] = {"name":"","files":["analysis_bench.rs","analysis_stats.rs","help.rs","main.rs"]};
 sourcesIndex["ra_db"] = {"name":"","files":["cancellation.rs","input.rs","lib.rs"]};

@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["AstBuilder",""],["AstEditor",""]]});
+initSidebarItems({"struct":[["AstEditor",""]]});
