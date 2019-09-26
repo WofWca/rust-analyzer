@@ -340,14 +340,6 @@
 <span id="340">340</span>
 <span id="341">341</span>
 <span id="342">342</span>
-<span id="343">343</span>
-<span id="344">344</span>
-<span id="345">345</span>
-<span id="346">346</span>
-<span id="347">347</span>
-<span id="348">348</span>
-<span id="349">349</span>
-<span id="350">350</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! This module is concerned with finding methods that a given type provides.</span>
 <span class="doccomment">//! For details about how this works in rustc, see the method lookup page in the</span>
@@ -361,7 +353,6 @@
 <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">autoderef</span>, <span class="ident">lower</span>, <span class="ident">Canonical</span>, <span class="ident">InEnvironment</span>, <span class="ident">TraitEnvironment</span>, <span class="ident">TraitRef</span>};
 <span class="kw">use</span> <span class="kw">crate</span>::{
     <span class="ident">db</span>::<span class="ident">HirDatabase</span>,
-    <span class="ident">generics</span>::<span class="ident">HasGenericParams</span>,
     <span class="ident">impl_block</span>::{<span class="ident">ImplBlock</span>, <span class="ident">ImplId</span>},
     <span class="ident">nameres</span>::<span class="ident">CrateModuleId</span>,
     <span class="ident">resolve</span>::<span class="ident">Resolver</span>,
@@ -682,20 +673,13 @@
     <span class="ident">trait_</span>: <span class="ident">Trait</span>,
     <span class="ident">self_ty</span>: <span class="ident">Canonical</span><span class="op">&lt;</span><span class="ident">Ty</span><span class="op">&gt;</span>,
 ) <span class="op">-&gt;</span> <span class="ident">Canonical</span><span class="op">&lt;</span><span class="ident">InEnvironment</span><span class="op">&lt;</span><span class="kw">super</span>::<span class="ident">Obligation</span><span class="op">&gt;&gt;</span> {
-    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">substs</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
-    <span class="kw">let</span> <span class="ident">generics</span> <span class="op">=</span> <span class="ident">trait_</span>.<span class="ident">generic_params</span>(<span class="ident">db</span>);
     <span class="kw">let</span> <span class="ident">num_vars</span> <span class="op">=</span> <span class="ident">self_ty</span>.<span class="ident">num_vars</span>;
-    <span class="ident">substs</span>.<span class="ident">push</span>(<span class="ident">self_ty</span>.<span class="ident">value</span>);
-    <span class="ident">substs</span>.<span class="ident">extend</span>(
-        <span class="ident">generics</span>
-            .<span class="ident">params_including_parent</span>()
-            .<span class="ident">into_iter</span>()
-            .<span class="ident">skip</span>(<span class="number">1</span>)
-            .<span class="ident">enumerate</span>()
-            .<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">i</span>, <span class="ident">_p</span>)<span class="op">|</span> <span class="ident">Ty</span>::<span class="ident">Bound</span>((<span class="ident">i</span> <span class="op">+</span> <span class="ident">num_vars</span>) <span class="kw">as</span> <span class="ident">u32</span>)),
-    );
+    <span class="kw">let</span> <span class="ident">substs</span> <span class="op">=</span> <span class="kw">super</span>::<span class="ident">Substs</span>::<span class="ident">build_for_def</span>(<span class="ident">db</span>, <span class="ident">trait_</span>)
+        .<span class="ident">push</span>(<span class="ident">self_ty</span>.<span class="ident">value</span>)
+        .<span class="ident">fill_with_bound_vars</span>(<span class="ident">num_vars</span> <span class="kw">as</span> <span class="ident">u32</span>)
+        .<span class="ident">build</span>();
     <span class="kw">let</span> <span class="ident">num_vars</span> <span class="op">=</span> <span class="ident">substs</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="number">1</span> <span class="op">+</span> <span class="ident">self_ty</span>.<span class="ident">num_vars</span>;
-    <span class="kw">let</span> <span class="ident">trait_ref</span> <span class="op">=</span> <span class="ident">TraitRef</span> { <span class="ident">trait_</span>, <span class="ident">substs</span>: <span class="ident">substs</span>.<span class="ident">into</span>() };
+    <span class="kw">let</span> <span class="ident">trait_ref</span> <span class="op">=</span> <span class="ident">TraitRef</span> { <span class="ident">trait_</span>, <span class="ident">substs</span> };
     <span class="kw">let</span> <span class="ident">obligation</span> <span class="op">=</span> <span class="kw">super</span>::<span class="ident">Obligation</span>::<span class="ident">Trait</span>(<span class="ident">trait_ref</span>);
     <span class="ident">Canonical</span> { <span class="ident">num_vars</span>, <span class="ident">value</span>: <span class="ident">InEnvironment</span>::<span class="ident">new</span>(<span class="ident">env</span>, <span class="ident">obligation</span>) }
 }
