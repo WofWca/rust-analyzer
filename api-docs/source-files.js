@@ -1,7 +1,7 @@
 var N = null;var sourcesIndex = {};
 sourcesIndex["pre_commit"] = {"name":"","files":["pre-commit.rs"]};
 sourcesIndex["ra_arena"] = {"name":"","files":["lib.rs","map.rs"]};
-sourcesIndex["ra_assists"] = {"name":"","dirs":[{"name":"assists","files":["add_derive.rs","add_explicit_type.rs","add_impl.rs","add_missing_impl_members.rs","auto_import.rs","change_visibility.rs","fill_match_arms.rs","flip_binexpr.rs","flip_comma.rs","inline_local_variable.rs","introduce_variable.rs","merge_match_arms.rs","move_bounds.rs","move_guard.rs","raw_string.rs","remove_dbg.rs","replace_if_let_with_match.rs","split_import.rs"]}],"files":["assist_ctx.rs","ast_builder.rs","ast_editor.rs","lib.rs","marks.rs"]};
+sourcesIndex["ra_assists"] = {"name":"","dirs":[{"name":"assists","files":["add_derive.rs","add_explicit_type.rs","add_impl.rs","add_missing_impl_members.rs","auto_import.rs","change_visibility.rs","fill_match_arms.rs","flip_binexpr.rs","flip_comma.rs","inline_local_variable.rs","introduce_variable.rs","merge_match_arms.rs","move_bounds.rs","move_guard.rs","raw_string.rs","remove_dbg.rs","replace_if_let_with_match.rs","split_import.rs"]}],"files":["assist_ctx.rs","ast_editor.rs","lib.rs","marks.rs"]};
 sourcesIndex["ra_batch"] = {"name":"","files":["lib.rs"]};
 sourcesIndex["ra_cli"] = {"name":"","files":["analysis_bench.rs","analysis_stats.rs","help.rs","main.rs"]};
 sourcesIndex["ra_db"] = {"name":"","files":["cancellation.rs","input.rs","lib.rs"]};
@@ -13,7 +13,7 @@ sourcesIndex["ra_mbe"] = {"name":"","dirs":[{"name":"mbe_expander","files":["mat
 sourcesIndex["ra_parser"] = {"name":"","dirs":[{"name":"grammar","dirs":[{"name":"expressions","files":["atom.rs"]},{"name":"items","files":["consts.rs","nominal.rs","traits.rs","use_item.rs"]}],"files":["attributes.rs","expressions.rs","items.rs","params.rs","paths.rs","patterns.rs","type_args.rs","type_params.rs","types.rs"]},{"name":"syntax_kind","files":["generated.rs"]}],"files":["event.rs","grammar.rs","lib.rs","parser.rs","syntax_kind.rs","token_set.rs"]};
 sourcesIndex["ra_prof"] = {"name":"","files":["lib.rs","memory_usage.rs"]};
 sourcesIndex["ra_project_model"] = {"name":"","files":["cargo_workspace.rs","json_project.rs","lib.rs","sysroot.rs"]};
-sourcesIndex["ra_syntax"] = {"name":"","dirs":[{"name":"algo","files":["visit.rs"]},{"name":"ast","files":["expr_extensions.rs","extensions.rs","generated.rs","tokens.rs","traits.rs"]},{"name":"parsing","files":["lexer.rs","reparsing.rs","text_token_source.rs","text_tree_sink.rs"]},{"name":"validation","files":["block.rs"]}],"files":["algo.rs","ast.rs","fuzz.rs","lib.rs","parsing.rs","ptr.rs","syntax_error.rs","syntax_node.rs","validation.rs"]};
+sourcesIndex["ra_syntax"] = {"name":"","dirs":[{"name":"algo","files":["visit.rs"]},{"name":"ast","files":["expr_extensions.rs","extensions.rs","generated.rs","make.rs","tokens.rs","traits.rs"]},{"name":"parsing","files":["lexer.rs","reparsing.rs","text_token_source.rs","text_tree_sink.rs"]},{"name":"validation","files":["block.rs"]}],"files":["algo.rs","ast.rs","fuzz.rs","lib.rs","parsing.rs","ptr.rs","syntax_error.rs","syntax_node.rs","validation.rs"]};
 sourcesIndex["ra_text_edit"] = {"name":"","files":["lib.rs","test_utils.rs","text_edit.rs"]};
 sourcesIndex["ra_tools"] = {"name":"","files":["boilerplate_gen.rs","lib.rs"]};
 sourcesIndex["ra_tt"] = {"name":"","files":["buffer.rs","lib.rs"]};

@@ -342,8 +342,6 @@
 <span id="342">342</span>
 <span id="343">343</span>
 <span id="344">344</span>
-<span id="345">345</span>
-<span id="346">346</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! `ra_assists` crate provides a bunch of code assists, also known as code</span>
 <span class="doccomment">//! actions (in LSP) or intentions (in IntelliJ).</span>
@@ -355,11 +353,9 @@
 <span class="kw">mod</span> <span class="ident">assist_ctx</span>;
 <span class="kw">mod</span> <span class="ident">marks</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">ast_editor</span>;
-<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">ast_builder</span>;
-
-<span class="kw">use</span> <span class="ident">itertools</span>::<span class="ident">Itertools</span>;
 
 <span class="kw">use</span> <span class="ident">hir</span>::<span class="ident">db</span>::<span class="ident">HirDatabase</span>;
+<span class="kw">use</span> <span class="ident">itertools</span>::<span class="ident">Itertools</span>;
 <span class="kw">use</span> <span class="ident">ra_db</span>::<span class="ident">FileRange</span>;
 <span class="kw">use</span> <span class="ident">ra_syntax</span>::{<span class="ident">TextRange</span>, <span class="ident">TextUnit</span>};
 <span class="kw">use</span> <span class="ident">ra_text_edit</span>::<span class="ident">TextEdit</span>;
