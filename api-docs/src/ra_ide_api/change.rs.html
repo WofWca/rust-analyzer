@@ -352,12 +352,6 @@
 <span id="352">352</span>
 <span id="353">353</span>
 <span id="354">354</span>
-<span id="355">355</span>
-<span id="356">356</span>
-<span id="357">357</span>
-<span id="358">358</span>
-<span id="359">359</span>
-<span id="360">360</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">fmt</span>, <span class="ident">sync</span>::<span class="ident">Arc</span>, <span class="ident">time</span>};
 
@@ -374,7 +368,6 @@
 
 <span class="kw">use</span> <span class="kw">crate</span>::{
     <span class="ident">db</span>::{<span class="ident">DebugData</span>, <span class="ident">RootDatabase</span>},
-    <span class="ident">status</span>::<span class="ident">syntax_tree_stats</span>,
     <span class="ident">symbol_index</span>::{<span class="ident">SymbolIndex</span>, <span class="ident">SymbolsDatabase</span>},
 };
 
@@ -607,11 +600,6 @@
 
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">last_gc_check</span>.<span class="ident">elapsed</span>() <span class="op">&gt;</span> <span class="ident">GC_COOLDOWN</span> {
             <span class="self">self</span>.<span class="ident">last_gc_check</span> <span class="op">=</span> <span class="kw">crate</span>::<span class="ident">wasm_shims</span>::<span class="ident">Instant</span>::<span class="ident">now</span>();
-            <span class="kw">let</span> <span class="ident">retained_trees</span> <span class="op">=</span> <span class="ident">syntax_tree_stats</span>(<span class="self">self</span>).<span class="ident">retained</span>;
-            <span class="kw">if</span> <span class="ident">retained_trees</span> <span class="op">&gt;</span> <span class="number">100</span> {
-                <span class="ident">log</span>::<span class="macro">info</span><span class="macro">!</span>(<span class="string">&quot;automatic garbadge collection, {} retained trees&quot;</span>, <span class="ident">retained_trees</span>);
-                <span class="self">self</span>.<span class="ident">collect_garbage</span>();
-            }
         }
     }
 
