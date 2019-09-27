@@ -351,7 +351,7 @@
                     .<span class="ident">fields</span>()
                     .<span class="ident">enumerate</span>()
                     .<span class="ident">map</span>(<span class="op">|</span>(<span class="ident">i</span>, <span class="ident">fd</span>)<span class="op">|</span> <span class="ident">StructFieldData</span> {
-                        <span class="ident">name</span>: <span class="ident">Name</span>::<span class="ident">tuple_field_name</span>(<span class="ident">i</span>),
+                        <span class="ident">name</span>: <span class="ident">Name</span>::<span class="ident">new_tuple_field</span>(<span class="ident">i</span>),
                         <span class="ident">type_ref</span>: <span class="ident">TypeRef</span>::<span class="ident">from_ast_opt</span>(<span class="ident">fd</span>.<span class="ident">type_ref</span>()),
                     })
                     .<span class="ident">collect</span>();

@@ -401,6 +401,20 @@
 <span id="401">401</span>
 <span id="402">402</span>
 <span id="403">403</span>
+<span id="404">404</span>
+<span id="405">405</span>
+<span id="406">406</span>
+<span id="407">407</span>
+<span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
+<span id="412">412</span>
+<span id="413">413</span>
+<span id="414">414</span>
+<span id="415">415</span>
+<span id="416">416</span>
+<span id="417">417</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="ident">std</span>::{
     <span class="ident">hash</span>::{<span class="ident">Hash</span>, <span class="ident">Hasher</span>},
@@ -414,7 +428,7 @@
 
 <span class="kw">use</span> <span class="kw">crate</span>::{
     <span class="ident">db</span>::{<span class="ident">AstDatabase</span>, <span class="ident">DefDatabase</span>, <span class="ident">InternDatabase</span>},
-    <span class="ident">AstId</span>, <span class="ident">FileAstId</span>, <span class="ident">Module</span>, <span class="ident">Source</span>,
+    <span class="ident">AstId</span>, <span class="ident">Crate</span>, <span class="ident">FileAstId</span>, <span class="ident">Module</span>, <span class="ident">Source</span>,
 };
 
 <span class="doccomment">/// hir makes heavy use of ids: integer (u32) handlers to various things. You</span>
@@ -459,6 +473,17 @@
         <span class="kw">match</span> <span class="self">self</span>.<span class="number">0</span> {
             <span class="ident">HirFileIdRepr</span>::<span class="ident">File</span>(<span class="ident">file_id</span>) <span class="op">=&gt;</span> <span class="ident">file_id</span>,
             <span class="ident">HirFileIdRepr</span>::<span class="ident">Macro</span>(<span class="ident">_r</span>) <span class="op">=&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;macro generated file: {:?}&quot;</span>, <span class="self">self</span>),
+        }
+    }
+
+    <span class="doccomment">/// Get the crate which the macro lives in, if it is a macro file.</span>
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">macro_crate</span>(<span class="self">self</span>, <span class="ident">db</span>: <span class="kw-2">&amp;</span><span class="kw">impl</span> <span class="ident">AstDatabase</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Crate</span><span class="op">&gt;</span> {
+        <span class="kw">match</span> <span class="self">self</span>.<span class="number">0</span> {
+            <span class="ident">HirFileIdRepr</span>::<span class="ident">File</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
+            <span class="ident">HirFileIdRepr</span>::<span class="ident">Macro</span>(<span class="ident">macro_file</span>) <span class="op">=&gt;</span> {
+                <span class="kw">let</span> <span class="ident">loc</span> <span class="op">=</span> <span class="ident">macro_file</span>.<span class="ident">macro_call_id</span>.<span class="ident">loc</span>(<span class="ident">db</span>);
+                <span class="prelude-val">Some</span>(<span class="ident">loc</span>.<span class="ident">def</span>.<span class="ident">krate</span>)
+            }
         }
     }
 
@@ -525,10 +550,13 @@
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">Copy</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Hash</span>)]</span>
-<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MacroDefId</span>(<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="ident">AstId</span><span class="op">&lt;</span><span class="ident">ast</span>::<span class="ident">MacroCall</span><span class="op">&gt;</span>);
+<span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">MacroDefId</span> {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="ident">ast_id</span>: <span class="ident">AstId</span><span class="op">&lt;</span><span class="ident">ast</span>::<span class="ident">MacroCall</span><span class="op">&gt;</span>,
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="ident">krate</span>: <span class="ident">Crate</span>,
+}
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn</span> <span class="ident">macro_def_query</span>(<span class="ident">db</span>: <span class="kw-2">&amp;</span><span class="kw">impl</span> <span class="ident">AstDatabase</span>, <span class="ident">id</span>: <span class="ident">MacroDefId</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">MacroRules</span><span class="op">&gt;&gt;</span> {
-    <span class="kw">let</span> <span class="ident">macro_call</span> <span class="op">=</span> <span class="ident">id</span>.<span class="number">0</span>.<span class="ident">to_node</span>(<span class="ident">db</span>);
+    <span class="kw">let</span> <span class="ident">macro_call</span> <span class="op">=</span> <span class="ident">id</span>.<span class="ident">ast_id</span>.<span class="ident">to_node</span>(<span class="ident">db</span>);
     <span class="kw">let</span> <span class="ident">arg</span> <span class="op">=</span> <span class="ident">macro_call</span>.<span class="ident">token_tree</span>()<span class="question-mark">?</span>;
     <span class="kw">let</span> (<span class="ident">tt</span>, <span class="kw">_</span>) <span class="op">=</span> <span class="ident">mbe</span>::<span class="ident">ast_to_token_tree</span>(<span class="kw-2">&amp;</span><span class="ident">arg</span>).<span class="ident">or_else</span>(<span class="op">||</span> {
         <span class="ident">log</span>::<span class="macro">warn</span><span class="macro">!</span>(<span class="string">&quot;fail on macro_def to token tree: {:#?}&quot;</span>, <span class="ident">arg</span>);

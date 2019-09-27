@@ -1450,7 +1450,7 @@
         <span class="ident">hir</span>::<span class="ident">PathKind</span>::<span class="ident">Plain</span> <span class="op">=&gt;</span> {}
         <span class="ident">hir</span>::<span class="ident">PathKind</span>::<span class="ident">Self_</span> <span class="op">=&gt;</span> <span class="ident">ps</span>.<span class="ident">push</span>(<span class="string">&quot;self&quot;</span>.<span class="ident">into</span>()),
         <span class="ident">hir</span>::<span class="ident">PathKind</span>::<span class="ident">Super</span> <span class="op">=&gt;</span> <span class="ident">ps</span>.<span class="ident">push</span>(<span class="string">&quot;super&quot;</span>.<span class="ident">into</span>()),
-        <span class="ident">hir</span>::<span class="ident">PathKind</span>::<span class="ident">Type</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">None</span>,
+        <span class="ident">hir</span>::<span class="ident">PathKind</span>::<span class="ident">Type</span>(<span class="kw">_</span>) <span class="op">|</span> <span class="ident">hir</span>::<span class="ident">PathKind</span>::<span class="ident">DollarCrate</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">None</span>,
     }
     <span class="kw">for</span> <span class="ident">s</span> <span class="kw">in</span> <span class="ident">path</span>.<span class="ident">segments</span>.<span class="ident">iter</span>() {
         <span class="ident">ps</span>.<span class="ident">push</span>(<span class="ident">s</span>.<span class="ident">name</span>.<span class="ident">to_string</span>().<span class="ident">into</span>());

@@ -158,6 +158,8 @@
 <span id="158">158</span>
 <span id="159">159</span>
 <span id="160">160</span>
+<span id="161">161</span>
+<span id="162">162</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! HIR for references to types. Paths in these are not yet resolved. They can</span>
 <span class="doccomment">//! be directly created from an ast::TypeRef, without further queries.</span>
@@ -233,6 +235,7 @@
             }
             <span class="ident">ast</span>::<span class="ident">TypeRef</span>::<span class="ident">NeverType</span>(..) <span class="op">=&gt;</span> <span class="ident">TypeRef</span>::<span class="ident">Never</span>,
             <span class="ident">ast</span>::<span class="ident">TypeRef</span>::<span class="ident">PathType</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> {
+                <span class="comment">// FIXME: Use `Path::from_src`</span>
                 <span class="ident">inner</span>.<span class="ident">path</span>().<span class="ident">and_then</span>(<span class="ident">Path</span>::<span class="ident">from_ast</span>).<span class="ident">map</span>(<span class="ident">TypeRef</span>::<span class="ident">Path</span>).<span class="ident">unwrap_or</span>(<span class="ident">TypeRef</span>::<span class="ident">Error</span>)
             }
             <span class="ident">ast</span>::<span class="ident">TypeRef</span>::<span class="ident">PointerType</span>(<span class="ident">inner</span>) <span class="op">=&gt;</span> {
@@ -302,6 +305,7 @@
                     <span class="prelude-val">Some</span>(<span class="ident">p</span>) <span class="op">=&gt;</span> <span class="ident">p</span>,
                     <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="kw">return</span> <span class="ident">TypeBound</span>::<span class="ident">Error</span>,
                 };
+                <span class="comment">// FIXME: Use `Path::from_src`</span>
                 <span class="kw">let</span> <span class="ident">path</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">Path</span>::<span class="ident">from_ast</span>(<span class="ident">path</span>) {
                     <span class="prelude-val">Some</span>(<span class="ident">p</span>) <span class="op">=&gt;</span> <span class="ident">p</span>,
                     <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="kw">return</span> <span class="ident">TypeBound</span>::<span class="ident">Error</span>,

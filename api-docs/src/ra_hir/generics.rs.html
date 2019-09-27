@@ -226,6 +226,7 @@
 <span id="226">226</span>
 <span id="227">227</span>
 <span id="228">228</span>
+<span id="229">229</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Many kinds of items or constructs can have generic parameters: functions,</span>
 <span class="doccomment">//! structs, impls, traits, etc. This module provides a common HIR for these</span>
@@ -361,6 +362,7 @@
     <span class="kw">fn</span> <span class="ident">fill_params</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">params</span>: <span class="ident">ast</span>::<span class="ident">TypeParamList</span>, <span class="ident">start</span>: <span class="ident">u32</span>) {
         <span class="kw">for</span> (<span class="ident">idx</span>, <span class="ident">type_param</span>) <span class="kw">in</span> <span class="ident">params</span>.<span class="ident">type_params</span>().<span class="ident">enumerate</span>() {
             <span class="kw">let</span> <span class="ident">name</span> <span class="op">=</span> <span class="ident">type_param</span>.<span class="ident">name</span>().<span class="ident">map_or_else</span>(<span class="ident">Name</span>::<span class="ident">missing</span>, <span class="op">|</span><span class="ident">it</span><span class="op">|</span> <span class="ident">it</span>.<span class="ident">as_name</span>());
+            <span class="comment">// FIXME: Use `Path::from_src`</span>
             <span class="kw">let</span> <span class="ident">default</span> <span class="op">=</span> <span class="ident">type_param</span>.<span class="ident">default_type</span>().<span class="ident">and_then</span>(<span class="op">|</span><span class="ident">t</span><span class="op">|</span> <span class="ident">t</span>.<span class="ident">path</span>()).<span class="ident">and_then</span>(<span class="ident">Path</span>::<span class="ident">from_ast</span>);
 
             <span class="kw">let</span> <span class="ident">param</span> <span class="op">=</span> <span class="ident">GenericParam</span> { <span class="ident">idx</span>: <span class="ident">idx</span> <span class="kw">as</span> <span class="ident">u32</span> <span class="op">+</span> <span class="ident">start</span>, <span class="ident">name</span>: <span class="ident">name</span>.<span class="ident">clone</span>(), <span class="ident">default</span> };
