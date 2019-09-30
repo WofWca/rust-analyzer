@@ -29,6 +29,21 @@
 <span id="29">29</span>
 <span id="30">30</span>
 <span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
+<span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
+<span id="45">45</span>
+<span id="46">46</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 
@@ -54,8 +69,23 @@
         <span class="ident">p</span>.<span class="ident">bump</span>(<span class="macro">T</span><span class="macro">!</span>[<span class="op">!</span>]);
     }
 
-    <span class="kw">if</span> <span class="ident">p</span>.<span class="ident">at</span>(<span class="macro">T</span><span class="macro">!</span>[<span class="string">&#39;[&#39;</span>]) {
-        <span class="ident">items</span>::<span class="ident">token_tree</span>(<span class="ident">p</span>);
+    <span class="kw">if</span> <span class="ident">p</span>.<span class="ident">eat</span>(<span class="macro">T</span><span class="macro">!</span>[<span class="string">&#39;[&#39;</span>]) {
+        <span class="ident">paths</span>::<span class="ident">use_path</span>(<span class="ident">p</span>);
+
+        <span class="kw">match</span> <span class="ident">p</span>.<span class="ident">current</span>() {
+            <span class="macro">T</span><span class="macro">!</span>[<span class="op">=</span>] <span class="op">=&gt;</span> {
+                <span class="ident">p</span>.<span class="ident">bump</span>(<span class="macro">T</span><span class="macro">!</span>[<span class="op">=</span>]);
+                <span class="kw">if</span> <span class="ident">expressions</span>::<span class="ident">literal</span>(<span class="ident">p</span>).<span class="ident">is_none</span>() {
+                    <span class="ident">p</span>.<span class="ident">error</span>(<span class="string">&quot;expected literal&quot;</span>);
+                }
+            }
+            <span class="macro">T</span><span class="macro">!</span>[<span class="string">&#39;(&#39;</span>] <span class="op">|</span> <span class="macro">T</span><span class="macro">!</span>[<span class="string">&#39;[&#39;</span>] <span class="op">|</span> <span class="macro">T</span><span class="macro">!</span>[<span class="string">&#39;{&#39;</span>] <span class="op">=&gt;</span> <span class="ident">items</span>::<span class="ident">token_tree</span>(<span class="ident">p</span>),
+            <span class="kw">_</span> <span class="op">=&gt;</span> {}
+        }
+
+        <span class="kw">if</span> <span class="op">!</span><span class="ident">p</span>.<span class="ident">eat</span>(<span class="macro">T</span><span class="macro">!</span>[<span class="string">&#39;]&#39;</span>]) {
+            <span class="ident">p</span>.<span class="ident">error</span>(<span class="string">&quot;expected `]`&quot;</span>);
+        }
     } <span class="kw">else</span> {
         <span class="ident">p</span>.<span class="ident">error</span>(<span class="string">&quot;expected `[`&quot;</span>);
     }

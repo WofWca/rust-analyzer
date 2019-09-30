@@ -3936,6 +3936,47 @@
 <span id="3936">3936</span>
 <span id="3937">3937</span>
 <span id="3938">3938</span>
+<span id="3939">3939</span>
+<span id="3940">3940</span>
+<span id="3941">3941</span>
+<span id="3942">3942</span>
+<span id="3943">3943</span>
+<span id="3944">3944</span>
+<span id="3945">3945</span>
+<span id="3946">3946</span>
+<span id="3947">3947</span>
+<span id="3948">3948</span>
+<span id="3949">3949</span>
+<span id="3950">3950</span>
+<span id="3951">3951</span>
+<span id="3952">3952</span>
+<span id="3953">3953</span>
+<span id="3954">3954</span>
+<span id="3955">3955</span>
+<span id="3956">3956</span>
+<span id="3957">3957</span>
+<span id="3958">3958</span>
+<span id="3959">3959</span>
+<span id="3960">3960</span>
+<span id="3961">3961</span>
+<span id="3962">3962</span>
+<span id="3963">3963</span>
+<span id="3964">3964</span>
+<span id="3965">3965</span>
+<span id="3966">3966</span>
+<span id="3967">3967</span>
+<span id="3968">3968</span>
+<span id="3969">3969</span>
+<span id="3970">3970</span>
+<span id="3971">3971</span>
+<span id="3972">3972</span>
+<span id="3973">3973</span>
+<span id="3974">3974</span>
+<span id="3975">3975</span>
+<span id="3976">3976</span>
+<span id="3977">3977</span>
+<span id="3978">3978</span>
+<span id="3979">3979</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="comment">// Generated file, do not edit by hand, see `crate/ra_tools/src/codegen`</span>
 
@@ -4105,10 +4146,51 @@
     }
 }
 <span class="kw">impl</span> <span class="ident">Attr</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">TokenTree</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">path</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Path</span><span class="op">&gt;</span> {
+        <span class="ident">AstChildren</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">syntax</span>).<span class="ident">next</span>()
+    }
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">input</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">AttrInput</span><span class="op">&gt;</span> {
         <span class="ident">AstChildren</span>::<span class="ident">new</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">syntax</span>).<span class="ident">next</span>()
     }
 }
+<span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Hash</span>)]</span>
+<span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">AttrInput</span> {
+    <span class="ident">Literal</span>(<span class="ident">Literal</span>),
+    <span class="ident">TokenTree</span>(<span class="ident">TokenTree</span>),
+}
+<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">Literal</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">AttrInput</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">node</span>: <span class="ident">Literal</span>) <span class="op">-&gt;</span> <span class="ident">AttrInput</span> {
+        <span class="ident">AttrInput</span>::<span class="ident">Literal</span>(<span class="ident">node</span>)
+    }
+}
+<span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">TokenTree</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">AttrInput</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">node</span>: <span class="ident">TokenTree</span>) <span class="op">-&gt;</span> <span class="ident">AttrInput</span> {
+        <span class="ident">AttrInput</span>::<span class="ident">TokenTree</span>(<span class="ident">node</span>)
+    }
+}
+<span class="kw">impl</span> <span class="ident">AstNode</span> <span class="kw">for</span> <span class="ident">AttrInput</span> {
+    <span class="kw">fn</span> <span class="ident">can_cast</span>(<span class="ident">kind</span>: <span class="ident">SyntaxKind</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
+        <span class="kw">match</span> <span class="ident">kind</span> {
+            <span class="ident">LITERAL</span> <span class="op">|</span> <span class="ident">TOKEN_TREE</span> <span class="op">=&gt;</span> <span class="bool-val">true</span>,
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="bool-val">false</span>,
+        }
+    }
+    <span class="kw">fn</span> <span class="ident">cast</span>(<span class="ident">syntax</span>: <span class="ident">SyntaxNode</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">syntax</span>.<span class="ident">kind</span>() {
+            <span class="ident">LITERAL</span> <span class="op">=&gt;</span> <span class="ident">AttrInput</span>::<span class="ident">Literal</span>(<span class="ident">Literal</span> { <span class="ident">syntax</span> }),
+            <span class="ident">TOKEN_TREE</span> <span class="op">=&gt;</span> <span class="ident">AttrInput</span>::<span class="ident">TokenTree</span>(<span class="ident">TokenTree</span> { <span class="ident">syntax</span> }),
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="kw">return</span> <span class="prelude-val">None</span>,
+        };
+        <span class="prelude-val">Some</span>(<span class="ident">res</span>)
+    }
+    <span class="kw">fn</span> <span class="ident">syntax</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="kw-2">&amp;</span><span class="ident">SyntaxNode</span> {
+        <span class="kw">match</span> <span class="self">self</span> {
+            <span class="ident">AttrInput</span>::<span class="ident">Literal</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="kw-2">&amp;</span><span class="ident">it</span>.<span class="ident">syntax</span>,
+            <span class="ident">AttrInput</span>::<span class="ident">TokenTree</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="kw-2">&amp;</span><span class="ident">it</span>.<span class="ident">syntax</span>,
+        }
+    }
+}
+<span class="kw">impl</span> <span class="ident">AttrInput</span> {}
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>, <span class="ident">Clone</span>, <span class="ident">PartialEq</span>, <span class="ident">Eq</span>, <span class="ident">Hash</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">AwaitExpr</span> {
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="ident">syntax</span>: <span class="ident">SyntaxNode</span>,

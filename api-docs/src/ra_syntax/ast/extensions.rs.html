@@ -430,41 +430,12 @@
 <span id="430">430</span>
 <span id="431">431</span>
 <span id="432">432</span>
-<span id="433">433</span>
-<span id="434">434</span>
-<span id="435">435</span>
-<span id="436">436</span>
-<span id="437">437</span>
-<span id="438">438</span>
-<span id="439">439</span>
-<span id="440">440</span>
-<span id="441">441</span>
-<span id="442">442</span>
-<span id="443">443</span>
-<span id="444">444</span>
-<span id="445">445</span>
-<span id="446">446</span>
-<span id="447">447</span>
-<span id="448">448</span>
-<span id="449">449</span>
-<span id="450">450</span>
-<span id="451">451</span>
-<span id="452">452</span>
-<span id="453">453</span>
-<span id="454">454</span>
-<span id="455">455</span>
-<span id="456">456</span>
-<span id="457">457</span>
-<span id="458">458</span>
-<span id="459">459</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Various extension methods to ast Nodes, which are hard to code-generate.</span>
 <span class="doccomment">//! Extensions for various expressions live in a sibling `expr_extensions` module.</span>
 
-<span class="kw">use</span> <span class="ident">itertools</span>::<span class="ident">Itertools</span>;
-
 <span class="kw">use</span> <span class="kw">crate</span>::{
-    <span class="ident">ast</span>::{<span class="self">self</span>, <span class="ident">child_opt</span>, <span class="ident">children</span>, <span class="ident">AstChildren</span>, <span class="ident">AstNode</span>, <span class="ident">SyntaxNode</span>},
+    <span class="ident">ast</span>::{<span class="self">self</span>, <span class="ident">child_opt</span>, <span class="ident">children</span>, <span class="ident">AstChildren</span>, <span class="ident">AstNode</span>, <span class="ident">AttrInput</span>, <span class="ident">SyntaxNode</span>},
     <span class="ident">SmolStr</span>, <span class="ident">SyntaxElement</span>,
     <span class="ident">SyntaxKind</span>::<span class="kw-2">*</span>,
     <span class="ident">SyntaxToken</span>, <span class="ident">T</span>,
@@ -498,62 +469,37 @@
 }
 
 <span class="kw">impl</span> <span class="ident">ast</span>::<span class="ident">Attr</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_inner</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
-        <span class="kw">let</span> <span class="ident">tt</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">value</span>() {
-            <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="kw">return</span> <span class="bool-val">false</span>,
-            <span class="prelude-val">Some</span>(<span class="ident">tt</span>) <span class="op">=&gt;</span> <span class="ident">tt</span>,
-        };
-
-        <span class="kw">let</span> <span class="ident">prev</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">tt</span>.<span class="ident">syntax</span>().<span class="ident">prev_sibling</span>() {
-            <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="kw">return</span> <span class="bool-val">false</span>,
-            <span class="prelude-val">Some</span>(<span class="ident">prev</span>) <span class="op">=&gt;</span> <span class="ident">prev</span>,
-        };
-
-        <span class="ident">prev</span>.<span class="ident">kind</span>() <span class="op">==</span> <span class="macro">T</span><span class="macro">!</span>[<span class="op">!</span>]
-    }
-
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_atom</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">SmolStr</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">tt</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">value</span>()<span class="question-mark">?</span>;
-        <span class="kw">let</span> (<span class="ident">_bra</span>, <span class="ident">attr</span>, <span class="ident">_ket</span>) <span class="op">=</span> <span class="ident">tt</span>.<span class="ident">syntax</span>().<span class="ident">children_with_tokens</span>().<span class="ident">collect_tuple</span>()<span class="question-mark">?</span>;
-        <span class="kw">if</span> <span class="ident">attr</span>.<span class="ident">kind</span>() <span class="op">==</span> <span class="ident">IDENT</span> {
-            <span class="prelude-val">Some</span>(<span class="ident">attr</span>.<span class="ident">as_token</span>()<span class="question-mark">?</span>.<span class="ident">text</span>().<span class="ident">clone</span>())
-        } <span class="kw">else</span> {
-            <span class="prelude-val">None</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_simple_atom</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">SmolStr</span><span class="op">&gt;</span> {
+        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">input</span>() {
+            <span class="prelude-val">None</span> <span class="op">=&gt;</span> <span class="self">self</span>.<span class="ident">simple_name</span>(),
+            <span class="prelude-val">Some</span>(<span class="kw">_</span>) <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_call</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">SmolStr</span>, <span class="ident">ast</span>::<span class="ident">TokenTree</span>)<span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">tt</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">value</span>()<span class="question-mark">?</span>;
-        <span class="kw">let</span> (<span class="ident">_bra</span>, <span class="ident">attr</span>, <span class="ident">args</span>, <span class="ident">_ket</span>) <span class="op">=</span> <span class="ident">tt</span>.<span class="ident">syntax</span>().<span class="ident">children_with_tokens</span>().<span class="ident">collect_tuple</span>()<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">args</span> <span class="op">=</span> <span class="ident">ast</span>::<span class="ident">TokenTree</span>::<span class="ident">cast</span>(<span class="ident">args</span>.<span class="ident">as_node</span>()<span class="question-mark">?</span>.<span class="ident">clone</span>())<span class="question-mark">?</span>;
-        <span class="kw">if</span> <span class="ident">attr</span>.<span class="ident">kind</span>() <span class="op">==</span> <span class="ident">IDENT</span> {
-            <span class="prelude-val">Some</span>((<span class="ident">attr</span>.<span class="ident">as_token</span>()<span class="question-mark">?</span>.<span class="ident">text</span>().<span class="ident">clone</span>(), <span class="ident">args</span>))
-        } <span class="kw">else</span> {
-            <span class="prelude-val">None</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_simple_call</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">SmolStr</span>, <span class="ident">ast</span>::<span class="ident">TokenTree</span>)<span class="op">&gt;</span> {
+        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">input</span>() {
+            <span class="prelude-val">Some</span>(<span class="ident">AttrInput</span>::<span class="ident">TokenTree</span>(<span class="ident">tt</span>)) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>((<span class="self">self</span>.<span class="ident">simple_name</span>()<span class="question-mark">?</span>, <span class="ident">tt</span>)),
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_named</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">SmolStr</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">tt</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">value</span>()<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">attr</span> <span class="op">=</span> <span class="ident">tt</span>.<span class="ident">syntax</span>().<span class="ident">children_with_tokens</span>().<span class="ident">nth</span>(<span class="number">1</span>)<span class="question-mark">?</span>;
-        <span class="kw">if</span> <span class="ident">attr</span>.<span class="ident">kind</span>() <span class="op">==</span> <span class="ident">IDENT</span> {
-            <span class="prelude-val">Some</span>(<span class="ident">attr</span>.<span class="ident">as_token</span>()<span class="question-mark">?</span>.<span class="ident">text</span>().<span class="ident">clone</span>())
-        } <span class="kw">else</span> {
-            <span class="prelude-val">None</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_simple_key_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">SmolStr</span>, <span class="ident">SmolStr</span>)<span class="op">&gt;</span> {
+        <span class="kw">match</span> <span class="self">self</span>.<span class="ident">input</span>() {
+            <span class="prelude-val">Some</span>(<span class="ident">AttrInput</span>::<span class="ident">Literal</span>(<span class="ident">lit</span>)) <span class="op">=&gt;</span> {
+                <span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">simple_name</span>()<span class="question-mark">?</span>;
+                <span class="comment">// FIXME: escape? raw string?</span>
+                <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">lit</span>.<span class="ident">syntax</span>().<span class="ident">first_token</span>()<span class="question-mark">?</span>.<span class="ident">text</span>().<span class="ident">trim_matches</span>(<span class="string">&#39;&quot;&#39;</span>).<span class="ident">into</span>();
+                <span class="prelude-val">Some</span>((<span class="ident">key</span>, <span class="ident">value</span>))
+            }
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_key_value</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span>(<span class="ident">SmolStr</span>, <span class="ident">SmolStr</span>)<span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">tt</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">value</span>()<span class="question-mark">?</span>;
-        <span class="kw">let</span> <span class="ident">tt_node</span> <span class="op">=</span> <span class="ident">tt</span>.<span class="ident">syntax</span>();
-        <span class="kw">let</span> <span class="ident">attr</span> <span class="op">=</span> <span class="ident">tt_node</span>.<span class="ident">children_with_tokens</span>().<span class="ident">nth</span>(<span class="number">1</span>)<span class="question-mark">?</span>;
-        <span class="kw">if</span> <span class="ident">attr</span>.<span class="ident">kind</span>() <span class="op">==</span> <span class="ident">IDENT</span> {
-            <span class="kw">let</span> <span class="ident">key</span> <span class="op">=</span> <span class="ident">attr</span>.<span class="ident">as_token</span>()<span class="question-mark">?</span>.<span class="ident">text</span>().<span class="ident">clone</span>();
-            <span class="kw">let</span> <span class="ident">val_node</span> <span class="op">=</span> <span class="ident">tt_node</span>.<span class="ident">children_with_tokens</span>().<span class="ident">find</span>(<span class="op">|</span><span class="ident">t</span><span class="op">|</span> <span class="ident">t</span>.<span class="ident">kind</span>() <span class="op">==</span> <span class="ident">STRING</span>)<span class="question-mark">?</span>;
-            <span class="kw">let</span> <span class="ident">val</span> <span class="op">=</span> <span class="ident">val_node</span>.<span class="ident">as_token</span>()<span class="question-mark">?</span>.<span class="ident">text</span>().<span class="ident">trim_start_matches</span>(<span class="string">&#39;&quot;&#39;</span>).<span class="ident">trim_end_matches</span>(<span class="string">&#39;&quot;&#39;</span>);
-            <span class="prelude-val">Some</span>((<span class="ident">key</span>, <span class="ident">SmolStr</span>::<span class="ident">new</span>(<span class="ident">val</span>)))
-        } <span class="kw">else</span> {
-            <span class="prelude-val">None</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">simple_name</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">SmolStr</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">path</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">path</span>()<span class="question-mark">?</span>;
+        <span class="kw">match</span> (<span class="ident">path</span>.<span class="ident">segment</span>(), <span class="ident">path</span>.<span class="ident">qualifier</span>()) {
+            (<span class="prelude-val">Some</span>(<span class="ident">segment</span>), <span class="prelude-val">None</span>) <span class="op">=&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">segment</span>.<span class="ident">syntax</span>().<span class="ident">first_token</span>()<span class="question-mark">?</span>.<span class="ident">text</span>().<span class="ident">clone</span>()),
+            <span class="kw">_</span> <span class="op">=&gt;</span> <span class="prelude-val">None</span>,
         }
     }
 }

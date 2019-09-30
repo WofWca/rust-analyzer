@@ -266,7 +266,7 @@
         <span class="ident">children</span>(<span class="self">self</span>)
     }
     <span class="kw">fn</span> <span class="ident">has_atom_attr</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">atom</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
-        <span class="self">self</span>.<span class="ident">attrs</span>().<span class="ident">filter_map</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">as_atom</span>()).<span class="ident">any</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span> <span class="op">==</span> <span class="ident">atom</span>)
+        <span class="self">self</span>.<span class="ident">attrs</span>().<span class="ident">filter_map</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">as_simple_atom</span>()).<span class="ident">any</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span> <span class="op">==</span> <span class="ident">atom</span>)
     }
 }
 

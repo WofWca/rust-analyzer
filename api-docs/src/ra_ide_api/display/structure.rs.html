@@ -473,7 +473,7 @@
             <span class="ident">node_range</span>: <span class="ident">node</span>.<span class="ident">syntax</span>().<span class="ident">text_range</span>(),
             <span class="ident">kind</span>: <span class="ident">node</span>.<span class="ident">syntax</span>().<span class="ident">kind</span>(),
             <span class="ident">detail</span>,
-            <span class="ident">deprecated</span>: <span class="ident">node</span>.<span class="ident">attrs</span>().<span class="ident">filter_map</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">as_named</span>()).<span class="ident">any</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span> <span class="op">==</span> <span class="string">&quot;deprecated&quot;</span>),
+            <span class="ident">deprecated</span>: <span class="ident">node</span>.<span class="ident">attrs</span>().<span class="ident">filter_map</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span>.<span class="ident">simple_name</span>()).<span class="ident">any</span>(<span class="op">|</span><span class="ident">x</span><span class="op">|</span> <span class="ident">x</span> <span class="op">==</span> <span class="string">&quot;deprecated&quot;</span>),
         })
     }
 
