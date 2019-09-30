@@ -168,9 +168,9 @@
 <span id="168">168</span>
 <span id="169">169</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="doccomment">/// `tt` crate defines a `TokenTree` data structure: this is the interface (both</span>
-<span class="doccomment">/// input and output) of macros. It closely mirrors `proc_macro` crate&#39;s</span>
-<span class="doccomment">/// `TokenTree`.</span>
+<span class="doccomment">//! `tt` crate defines a `TokenTree` data structure: this is the interface (both</span>
+<span class="doccomment">//! input and output) of macros. It closely mirrors `proc_macro` crate&#39;s</span>
+<span class="doccomment">//! `TokenTree`.</span>
 
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">impl_froms</span> {
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>:<span class="ident">ident</span>: $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">v</span>:<span class="ident">ident</span>), <span class="kw-2">*</span>) <span class="op">=&gt;</span> {

@@ -93,14 +93,14 @@
 <span id="93">93</span>
 <span id="94">94</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="attribute">#![<span class="ident">recursion_limit</span> <span class="op">=</span> <span class="string">&quot;512&quot;</span>]</span>
-
 <span class="doccomment">//! HIR (previously known as descriptors) provides a high-level object oriented</span>
 <span class="doccomment">//! access to Rust code.</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! The principal difference between HIR and syntax trees is that HIR is bound</span>
 <span class="doccomment">//! to a particular crate instance. That is, it has cfg flags and features</span>
 <span class="doccomment">//! applied. So, the relation between syntax and HIR is many-to-one.</span>
+
+<span class="attribute">#![<span class="ident">recursion_limit</span> <span class="op">=</span> <span class="string">&quot;512&quot;</span>]</span>
 
 <span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">impl_froms</span> {
     (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>:<span class="ident">ident</span>: $(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">v</span>:<span class="ident">ident</span> $(($(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">sv</span>:<span class="ident">ident</span>),<span class="kw-2">*</span>))<span class="question-mark">?</span>),<span class="kw-2">*</span>) <span class="op">=&gt;</span> {

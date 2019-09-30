@@ -344,7 +344,11 @@
 <span id="344">344</span>
 <span id="345">345</span>
 <span id="346">346</span>
+<span id="347">347</span>
+<span id="348">348</span>
 </pre><div class="example-wrap"><pre class="rust ">
+<span class="doccomment">//! FIXME: write short doc here</span>
+
 <span class="kw">use</span> <span class="ident">std</span>::{
     <span class="ident">collections</span>::<span class="ident">BTreeMap</span>,
     <span class="ident">fs</span>,
@@ -629,7 +633,7 @@
     <span class="kw">let</span> <span class="ident">output</span> <span class="op">=</span> <span class="ident">rustfmt</span>.<span class="ident">wait_with_output</span>()<span class="question-mark">?</span>;
     <span class="kw">let</span> <span class="ident">stdout</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">from_utf8</span>(<span class="ident">output</span>.<span class="ident">stdout</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> <span class="ident">preamble</span> <span class="op">=</span> <span class="string">&quot;Generated file, do not edit by hand, see `crate/ra_tools/src/codegen`&quot;</span>;
-    <span class="prelude-val">Ok</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;// {}\n\n{}&quot;</span>, <span class="ident">preamble</span>, <span class="ident">stdout</span>))
+    <span class="prelude-val">Ok</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;//! {}\n\n{}&quot;</span>, <span class="ident">preamble</span>, <span class="ident">stdout</span>))
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Deserialize</span>, <span class="ident">Debug</span>)]</span>

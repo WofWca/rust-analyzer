@@ -243,14 +243,16 @@
 <span id="243">243</span>
 <span id="244">244</span>
 <span id="245">245</span>
+<span id="246">246</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="doccomment">/// This module specifies the input to rust-analyzer. In some sense, this is</span>
-<span class="doccomment">/// **the** most important module, because all other fancy stuff is strictly</span>
-<span class="doccomment">/// derived from this input.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// Note that neither this module, nor any other part of the analyzer&#39;s core do</span>
-<span class="doccomment">/// actual IO. See `vfs` and `project_model` in the `ra_lsp_server` crate for how</span>
-<span class="doccomment">/// actual IO is done and lowered to input.</span>
+<span class="doccomment">//! This module specifies the input to rust-analyzer. In some sense, this is</span>
+<span class="doccomment">//! **the** most important module, because all other fancy stuff is strictly</span>
+<span class="doccomment">//! derived from this input.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! Note that neither this module, nor any other part of the analyzer&#39;s core do</span>
+<span class="doccomment">//! actual IO. See `vfs` and `project_model` in the `ra_lsp_server` crate for how</span>
+<span class="doccomment">//! actual IO is done and lowered to input.</span>
+
 <span class="kw">use</span> <span class="ident">relative_path</span>::{<span class="ident">RelativePath</span>, <span class="ident">RelativePathBuf</span>};
 <span class="kw">use</span> <span class="ident">rustc_hash</span>::<span class="ident">FxHashMap</span>;
 

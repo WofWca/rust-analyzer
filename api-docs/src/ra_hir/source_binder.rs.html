@@ -452,13 +452,13 @@
 <span id="452">452</span>
 <span id="453">453</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="doccomment">/// Lookup hir elements using positions in the source code. This is a lossy</span>
-<span class="doccomment">/// transformation: in general, a single source might correspond to several</span>
-<span class="doccomment">/// modules, functions, etc, due to macros, cfgs and `#[path=]` attributes on</span>
-<span class="doccomment">/// modules.</span>
-<span class="doccomment">///</span>
-<span class="doccomment">/// So, this modules should not be used during hir construction, it exists</span>
-<span class="doccomment">/// purely for &quot;IDE needs&quot;.</span>
+<span class="doccomment">//! Lookup hir elements using positions in the source code. This is a lossy</span>
+<span class="doccomment">//! transformation: in general, a single source might correspond to several</span>
+<span class="doccomment">//! modules, functions, etc, due to macros, cfgs and `#[path=]` attributes on</span>
+<span class="doccomment">//! modules.</span>
+<span class="doccomment">//!</span>
+<span class="doccomment">//! So, this modules should not be used during hir construction, it exists</span>
+<span class="doccomment">//! purely for &quot;IDE needs&quot;.</span>
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">Arc</span>;
 
 <span class="kw">use</span> <span class="ident">ra_db</span>::<span class="ident">FileId</span>;
