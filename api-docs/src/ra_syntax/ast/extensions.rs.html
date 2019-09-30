@@ -447,6 +447,16 @@
 <span id="447">447</span>
 <span id="448">448</span>
 <span id="449">449</span>
+<span id="450">450</span>
+<span id="451">451</span>
+<span id="452">452</span>
+<span id="453">453</span>
+<span id="454">454</span>
+<span id="455">455</span>
+<span id="456">456</span>
+<span id="457">457</span>
+<span id="458">458</span>
+<span id="459">459</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Various extension methods to ast Nodes, which are hard to code-generate.</span>
 <span class="doccomment">//! Extensions for various expressions live in a sibling `expr_extensions` module.</span>
@@ -454,7 +464,7 @@
 <span class="kw">use</span> <span class="ident">itertools</span>::<span class="ident">Itertools</span>;
 
 <span class="kw">use</span> <span class="kw">crate</span>::{
-    <span class="ident">ast</span>::{<span class="self">self</span>, <span class="ident">child_opt</span>, <span class="ident">children</span>, <span class="ident">AstNode</span>, <span class="ident">SyntaxNode</span>},
+    <span class="ident">ast</span>::{<span class="self">self</span>, <span class="ident">child_opt</span>, <span class="ident">children</span>, <span class="ident">AstChildren</span>, <span class="ident">AstNode</span>, <span class="ident">SyntaxNode</span>},
     <span class="ident">SmolStr</span>, <span class="ident">SyntaxElement</span>,
     <span class="ident">SyntaxKind</span>::<span class="kw-2">*</span>,
     <span class="ident">SyntaxToken</span>, <span class="ident">T</span>,
@@ -650,6 +660,16 @@
 
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_negative</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">bool</span> {
         <span class="self">self</span>.<span class="ident">syntax</span>().<span class="ident">children_with_tokens</span>().<span class="ident">any</span>(<span class="op">|</span><span class="ident">t</span><span class="op">|</span> <span class="ident">t</span>.<span class="ident">kind</span>() <span class="op">==</span> <span class="macro">T</span><span class="macro">!</span>[<span class="op">!</span>])
+    }
+}
+
+<span class="kw">impl</span> <span class="ident">ast</span>::<span class="ident">AttrsOwner</span> <span class="kw">for</span> <span class="ident">ast</span>::<span class="ident">ImplItem</span> {
+    <span class="kw">fn</span> <span class="ident">attrs</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-&gt;</span> <span class="ident">AstChildren</span><span class="op">&lt;</span><span class="ident">ast</span>::<span class="ident">Attr</span><span class="op">&gt;</span> {
+        <span class="kw">match</span> <span class="self">self</span> {
+            <span class="ident">ast</span>::<span class="ident">ImplItem</span>::<span class="ident">FnDef</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="ident">it</span>.<span class="ident">attrs</span>(),
+            <span class="ident">ast</span>::<span class="ident">ImplItem</span>::<span class="ident">TypeAliasDef</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="ident">it</span>.<span class="ident">attrs</span>(),
+            <span class="ident">ast</span>::<span class="ident">ImplItem</span>::<span class="ident">ConstDef</span>(<span class="ident">it</span>) <span class="op">=&gt;</span> <span class="ident">it</span>.<span class="ident">attrs</span>(),
+        }
     }
 }
 
