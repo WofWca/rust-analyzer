@@ -706,11 +706,7 @@
             <span class="comment">//        break;</span>
             <span class="comment">//    }</span>
             <span class="comment">// }</span>
-            <span class="kw">if</span> <span class="ident">r</span>.<span class="ident">forbid_structs</span> {
-                <span class="kw">return</span> <span class="prelude-val">None</span>;
-            } <span class="kw">else</span> {
-                <span class="ident">block_expr</span>(<span class="ident">p</span>, <span class="prelude-val">None</span>)
-            }
+            <span class="ident">block_expr</span>(<span class="ident">p</span>, <span class="prelude-val">None</span>)
         }
         <span class="macro">T</span><span class="macro">!</span>[<span class="kw">return</span>] <span class="op">=&gt;</span> <span class="ident">return_expr</span>(<span class="ident">p</span>),
         <span class="macro">T</span><span class="macro">!</span>[<span class="kw">continue</span>] <span class="op">=&gt;</span> <span class="ident">continue_expr</span>(<span class="ident">p</span>),
@@ -846,6 +842,7 @@
 <span class="comment">//     if true {} else {};</span>
 <span class="comment">//     if true {} else if false {} else {};</span>
 <span class="comment">//     if S {};</span>
+<span class="comment">//     if { true } { } else { };</span>
 <span class="comment">// }</span>
 <span class="kw">fn</span> <span class="ident">if_expr</span>(<span class="ident">p</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Parser</span>) <span class="op">-&gt;</span> <span class="ident">CompletedMarker</span> {
     <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">p</span>.<span class="ident">at</span>(<span class="macro">T</span><span class="macro">!</span>[<span class="kw">if</span>]));
@@ -894,6 +891,7 @@
 <span class="comment">// fn foo() {</span>
 <span class="comment">//     while true {};</span>
 <span class="comment">//     while let Some(x) = it.next() {};</span>
+<span class="comment">//     while { true } {};</span>
 <span class="comment">// }</span>
 <span class="kw">fn</span> <span class="ident">while_expr</span>(<span class="ident">p</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Parser</span>, <span class="ident">m</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Marker</span><span class="op">&gt;</span>) <span class="op">-&gt;</span> <span class="ident">CompletedMarker</span> {
     <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">p</span>.<span class="ident">at</span>(<span class="macro">T</span><span class="macro">!</span>[<span class="kw">while</span>]));
@@ -941,6 +939,8 @@
 <span class="comment">// fn foo() {</span>
 <span class="comment">//     match () { };</span>
 <span class="comment">//     match S {};</span>
+<span class="comment">//     match { } { _ =&gt; () };</span>
+<span class="comment">//     match { S {} } {};</span>
 <span class="comment">// }</span>
 <span class="kw">fn</span> <span class="ident">match_expr</span>(<span class="ident">p</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Parser</span>) <span class="op">-&gt;</span> <span class="ident">CompletedMarker</span> {
     <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">p</span>.<span class="ident">at</span>(<span class="macro">T</span><span class="macro">!</span>[<span class="kw">match</span>]));
